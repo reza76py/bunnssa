@@ -1,0 +1,15 @@
+[Unit]
+Description=Bunnings SSA Gunicorn Service
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/srv/bunnings-ssa/backend
+Environment="DJANGO_SETTINGS_MODULE=backend.settings.production"
+EnvironmentFile=/srv/bunnings-ssa/backend/.env
+ExecStart=/srv/bunnings-ssa/.venv/bin/gunicorn backend.wsgi:application --bind 127.0.0.1:8000 --workers 3
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
