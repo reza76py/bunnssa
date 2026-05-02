@@ -21,7 +21,7 @@ export default function Layout() {
     <div style={styles.shell}>
       <aside style={styles.sidebar}>
         <div style={styles.brand}>
-          <span style={styles.brandName}>Bunnings SSA</span>
+          <span style={styles.brandName}>Staff Allocation</span>
           <span style={styles.brandSub}>Staff Allocation</span>
         </div>
         <nav style={styles.nav}>

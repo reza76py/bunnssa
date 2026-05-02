@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { authApi } from "../api";
+import rezTecheLogo from "../assets/rezteche-logo.png";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -29,8 +30,24 @@ export default function LoginPage() {
     <div style={styles.page}>
       <div style={styles.card}>
         <div style={styles.logo}>
+          <a
+            href="https://rezteche.com"
+            target="_blank"
+            rel="noreferrer"
+            style={styles.logoLink}
+          >
+            <img src={rezTecheLogo} alt="RezTeche" style={styles.logoImg} />
+          </a>
           <span style={styles.logoText}>Staff Allocation System</span>
-          <span style={styles.logoSub}>If you have an account, please sign in. Otherwise, register for a new account.</span>
+          <span style={styles.logoSub}>
+            Powered by{" "}
+            <a href="https://rezteche.com" target="_blank" rel="noreferrer" style={styles.poweredLink}>
+              RezTeche
+            </a>
+          </span>
+          <span style={styles.logoHint}>
+            If you have an account, please sign in. Otherwise, register for a new account.
+          </span>
         </div>
         <form onSubmit={handleLogin}>
           <div style={styles.field}>
@@ -85,13 +102,17 @@ const styles = {
     width: 360,
   },
   logo: { textAlign: "center", marginBottom: "1.5rem" },
+  logoLink: { display: "inline-block", marginBottom: ".75rem" },
+  logoImg: { height: 54, width: "auto", objectFit: "contain" },
   logoText: {
     display: "block",
     fontSize: 22,
     fontWeight: 600,
     color: "#1a1a18",
   },
-  logoSub: { fontSize: 13, color: "#888" },
+  logoSub: { display: "block", fontSize: 13, color: "#666", marginTop: 4 },
+  poweredLink: { color: "#d32f2f", textDecoration: "none", fontWeight: 600 },
+  logoHint: { display: "block", fontSize: 12, color: "#888", marginTop: 4 },
   field: { marginBottom: "1rem" },
   label: { display: "block", fontSize: 13, color: "#555", marginBottom: 4 },
   input: {

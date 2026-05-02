@@ -3,8 +3,21 @@ from decouple import config, Csv
 from .base import *
 
 DEBUG = config('DEBUG', default=False, cast=bool)
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=Csv())
-CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='', cast=Csv())
+ALLOWED_HOSTS = config(
+	'ALLOWED_HOSTS',
+	default='staffallocation.rezteche.com,www.staffallocation.rezteche.com',
+	cast=Csv(),
+)
+CSRF_TRUSTED_ORIGINS = config(
+	'CSRF_TRUSTED_ORIGINS',
+	default='https://staffallocation.rezteche.com,https://www.staffallocation.rezteche.com',
+	cast=Csv(),
+)
+CORS_ALLOWED_ORIGINS = config(
+	'CORS_ALLOWED_ORIGINS',
+	default='https://staffallocation.rezteche.com,https://www.staffallocation.rezteche.com',
+	cast=Csv(),
+)
 SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
 SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=True, cast=bool)
 CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=True, cast=bool)
