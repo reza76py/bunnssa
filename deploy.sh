@@ -2,23 +2,32 @@
 set -euo pipefail
 
 APP_DIR="/srv/bunnings-ssa"
-BACKEND_DIR="$APP_DIR/backend"
-FRONTEND_DIR="$APP_DIR/frontend"
-VENV_DIR="$APP_DIR/.venv"
+COMPOSE_FILE="docker-compose.prod.yml"
+COMPOSE="docker compose -f ${COMPOSE_FILE}"
 
 cd "$APP_DIR"
-git pull origin main
+git fetch origin main
+git pull --ff-only origin main
 
-source "$VENV_DIR/bin/activate"
-pip install -r "$BACKEND_DIR/requirements.txt"
-python "$BACKEND_DIR/manage.py" migrate --settings=backend.settings.production
-python "$BACKEND_DIR/manage.py" collectstatic --noinput --settings=backend.settings.production
+# Build updated images
+$COMPOSE build --pull
 
-cd "$FRONTEND_DIR"
-npm ci
-npm run build
+# Start DB first and wait for health
+$COMPOSE up -d db
 
-sudo systemctl restart bunnings-ssa
-sudo systemctl reload nginx
+# Rolling backend refresh with two replicas to reduce downtime
+$COMPOSE up -d --no-deps --scale backend=2 backend
+
+# Run DB migrations and collect static from fresh backend image
+$COMPOSE exec -T backend python manage.py migrate --settings=backend.settings.production
+$COMPOSE exec -T backend python manage.py collectstatic --noinput --settings=backend.settings.production
+
+# Refresh frontend container
+$COMPOSE up -d --no-deps frontend
+
+# Clean stale containers and show status
+$COMPOSE up -d --remove-orphans
+$COMPOSE ps
+
 
 echo "Deployment completed successfully."

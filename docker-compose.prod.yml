@@ -5,7 +5,7 @@ services:
     image: mysql:8.4
     restart: unless-stopped
     env_file:
-      - ./backend/.env
+      - ./.env
     environment:
       MYSQL_DATABASE: ${DB_NAME}
       MYSQL_USER: ${DB_USER}
@@ -13,28 +13,55 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
     volumes:
       - mysql_prod_data:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u${DB_USER}",
+          "-p${DB_PASSWORD}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   backend:
     build:
       context: ./backend
+      dockerfile: Dockerfile
     restart: unless-stopped
     env_file:
-      - ./backend/.env
-    command: gunicorn backend.wsgi:application --bind 0.0.0.0:8000
+      - ./.env
+    command: gunicorn backend.wsgi:application --bind 0.0.0.0:8000 --workers 3 --timeout 120
     volumes:
       - static_data:/app/staticfiles
       - media_data:/app/media
+    expose:
+      - "8000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "manage.py", "check"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   frontend:
     build:
       context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_API_URL: ${REACT_APP_API_URL}
     restart: unless-stopped
     ports:
       - "80:80"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
 
 volumes:
   mysql_prod_data:
