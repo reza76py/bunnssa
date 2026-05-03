@@ -19,8 +19,10 @@ export default function LoginPage() {
       localStorage.setItem("access_token", data.access);
       localStorage.setItem("refresh_token", data.refresh);
       navigate("/");
-    } catch {
-      setError("Invalid username or password.");
+    } catch (requestError) {
+      const message =
+        requestError.response?.data?.detail || "Invalid username or password.";
+      setError(message);
     } finally {
       setLoading(false);
     }

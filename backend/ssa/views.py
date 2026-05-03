@@ -86,6 +86,21 @@ class RegisterView(CreateAPIView):
     serializer_class = UserRegistrationSerializer
     permission_classes = [AllowAny]
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        email_sent = getattr(serializer, '_verification_email_sent', False)
+        message = (
+            'Please check your email to verify your account.'
+            if email_sent
+            else 'Account created. Verification email will be sent shortly.'
+        )
+        response_data = dict(serializer.data)
+        response_data['detail'] = message
+        return Response(response_data, status=status.HTTP_201_CREATED, headers=headers)
+
 
 class VerifyEmailView(APIView):
     permission_classes = [AllowAny]

@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { authApi } from "../api";
 
 export default function RegisterPage() {
-  const navigate = useNavigate();
   const [form, setForm] = useState({
     username: "",
     email: "",
@@ -13,15 +12,24 @@ export default function RegisterPage() {
     password: "",
   });
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
   const submit = async (event) => {
     event.preventDefault();
     setLoading(true);
     setError("");
+    setSuccess("");
     try {
       await authApi.register(form);
-      navigate("/login");
+      setSuccess("Please check your email to verify your account");
+      setForm({
+        username: "",
+        email: "",
+        first_name: "",
+        last_name: "",
+        password: "",
+      });
     } catch (requestError) {
       const data = requestError.response?.data;
       if (typeof data === "object" && data) {
@@ -68,6 +76,7 @@ export default function RegisterPage() {
             onChange={(value) => setForm({ ...form, password: value })}
           />
           {error && <p style={styles.error}>{error}</p>}
+          {success && <p style={styles.success}>{success}</p>}
           <button style={styles.button} type="submit" disabled={loading}>
             {loading ? "Creating…" : "Register"}
           </button>
@@ -137,6 +146,7 @@ const styles = {
     marginTop: 8,
   },
   error: { color: "#c0392b", fontSize: 13, marginBottom: ".75rem" },
+  success: { color: "#2e7d32", fontSize: 13, marginBottom: ".75rem" },
   meta: { marginTop: 14, fontSize: 13, color: "#666", textAlign: "center" },
   link: { color: "#d32f2f", textDecoration: "none", fontWeight: 600 },
 };

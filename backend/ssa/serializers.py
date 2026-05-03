@@ -1,6 +1,15 @@
+import logging
+
 from django.contrib.auth.models import User
+from django.contrib.auth.tokens import default_token_generator
+from django.conf import settings
+from django.core.mail import send_mail
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 from rest_framework import serializers
-from .models import Store, Supervisor, Member, AllocationResult, StoreAssignment, MemberAssignment, UserEmailSettings
+from .models import Store, Supervisor, Member, AllocationResult, StoreAssignment, MemberAssignment
+
+logger = logging.getLogger(__name__)
 
 
 class StoreSerializer(serializers.ModelSerializer):
@@ -55,9 +64,45 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'password', 'email', 'first_name', 'last_name']
+        extra_kwargs = {
+            'email': {'required': True},
+        }
 
     def create(self, validated_data):
-        return User.objects.create_user(**validated_data)
+        user = User.objects.create_user(**validated_data)
+        user.is_active = False
+        user.save(update_fields=['is_active'])
+
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        verify_url = f"{settings.FRONTEND_URL.rstrip('/')}/verify-email/{uid}/{token}"
+
+        self._verification_email_sent = False
+
+        try:
+            send_mail(
+                subject='Verify your email - Bunnings SSA',
+                message=(
+                    f'Hi {user.first_name or user.username},\n\n'
+                    'Thanks for registering with Bunnings SSA.\n'
+                    'Please verify your email by clicking the link below:\n\n'
+                    f'{verify_url}\n\n'
+                    'If you did not create this account, you can ignore this email.'
+                ),
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[user.email],
+                fail_silently=False,
+            )
+            self._verification_email_sent = True
+        except Exception as exc:
+            logger.exception(
+                'Failed to send verification email for user=%s email=%s: %s',
+                user.username,
+                user.email,
+                exc,
+            )
+
+        return user
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -80,56 +125,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         return 'User'
 
 
-class UserEmailSettingsSerializer(serializers.ModelSerializer):
-    email_app_password = serializers.CharField(write_only=True, required=False, allow_blank=True)
-    has_app_password = serializers.SerializerMethodField(read_only=True)
-
+class UserProfileUpdateSerializer(serializers.ModelSerializer):
     class Meta:
-        model = UserEmailSettings
-        fields = [
-            'email_host',
-            'email_port',
-            'email_host_user',
-            'email_app_password',
-            'from_name',
-            'has_app_password',
-        ]
-
-    def get_has_app_password(self, obj):
-        return obj.has_app_password()
-
-    def validate(self, attrs):
-        host = attrs.get('email_host')
-        if host is None and self.instance is not None:
-            host = self.instance.email_host
-        host = (host or '').strip().lower()
-
-        raw_password = attrs.get('email_app_password', None)
-        if raw_password:
-            normalized = raw_password.strip().replace(' ', '')
-            if 'gmail.com' in host and len(normalized) != 16:
-                raise serializers.ValidationError({
-                    'email_app_password': 'For Gmail SMTP, use a 16-character App Password (spaces optional).'
-                })
-            attrs['email_app_password'] = normalized
-
-        return attrs
-
-    def create(self, validated_data):
-        raw_password = validated_data.pop('email_app_password', '')
-        instance = UserEmailSettings(**validated_data)
-        if raw_password:
-            instance.set_app_password(raw_password)
-        instance.save()
-        return instance
-
-    def update(self, instance, validated_data):
-        if 'email_app_password' in validated_data:
-            raw_password = validated_data.pop('email_app_password')
-            if raw_password:
-                instance.set_app_password(raw_password)
-
-        for field, value in validated_data.items():
-            setattr(instance, field, value)
-        instance.save()
-        return instance
+        model = User
+        fields = ['first_name', 'last_name', 'email']

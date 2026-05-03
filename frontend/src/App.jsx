@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/Layout";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import EmailVerificationPage from "./pages/EmailVerificationPage";
 import StoresPage from "./pages/StoresPage";
 import SupervisorsPage from "./pages/SupervisorsPage";
 import MembersPage from "./pages/MembersPage";
@@ -20,6 +21,10 @@ export default function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route
+          path="/verify-email/:uid/:token"
+          element={<EmailVerificationPage />}
+        />
         <Route
           path="/"
           element={
