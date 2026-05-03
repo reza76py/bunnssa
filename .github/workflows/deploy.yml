@@ -43,19 +43,6 @@ jobs:
           CSRF_COOKIE_SECURE: ${{ secrets.CSRF_COOKIE_SECURE }}
           REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
         run: |
-          required_vars=(
-            SERVER_HOST SERVER_USER SECRET_KEY
-            DB_PASSWORD
-            EMAIL_HOST_USER EMAIL_APP_PASSWORD
-          )
-
-          for var_name in "${required_vars[@]}"; do
-            if [ -z "${!var_name}" ]; then
-              echo "Missing required value: ${var_name}" >&2
-              exit 1
-            fi
-          done
-
           ssh -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_HOST} <<EOF
             {
               echo "DJANGO_SETTINGS_MODULE=backend.settings.production"
