@@ -1,4 +1,4 @@
-name: Deploy Bunnings SSA
+﻿name: Deploy Bunnings SSA
 
 on:
   push:
@@ -30,32 +30,32 @@ jobs:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
         run: |
           ssh -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_HOST} bash << EOF
-            cat > /var/www/bunnings-ssa/.env << ENVEOF
-DJANGO_SETTINGS_MODULE=backend.settings.production
-DEBUG=False
-SECRET_KEY=${SECRET_KEY}
-DB_ENGINE=django.db.backends.mysql
-DB_NAME=bunnings_ssa
-DB_USER=root
-DB_PASSWORD=${DB_PASSWORD}
-DB_HOST=db
-DB_PORT=3306
-ALLOWED_HOSTS=staffallocation.rezteche.com,65.108.243.73
-CORS_ALLOWED_ORIGINS=https://staffallocation.rezteche.com
-CSRF_TRUSTED_ORIGINS=https://staffallocation.rezteche.com
-EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
-EMAIL_HOST=mail.privateemail.com
-EMAIL_PORT=587
-EMAIL_USE_TLS=True
-EMAIL_HOST_USER=${EMAIL_HOST_USER}
-EMAIL_APP_PASSWORD=${EMAIL_APP_PASSWORD}
-DEFAULT_FROM_EMAIL=Staff Allocation <info@rezteche.com>
-FRONTEND_URL=https://staffallocation.rezteche.com
-SECURE_SSL_REDIRECT=False
-SESSION_COOKIE_SECURE=True
-CSRF_COOKIE_SECURE=True
-REACT_APP_API_URL=https://staffallocation.rezteche.com/api
-ENVEOF
+            {
+              echo "DJANGO_SETTINGS_MODULE=backend.settings.production"
+              echo "DEBUG=False"
+              echo "SECRET_KEY=${SECRET_KEY}"
+              echo "DB_ENGINE=django.db.backends.mysql"
+              echo "DB_NAME=bunnings_ssa"
+              echo "DB_USER=root"
+              echo "DB_PASSWORD=${DB_PASSWORD}"
+              echo "DB_HOST=db"
+              echo "DB_PORT=3306"
+              echo "ALLOWED_HOSTS=staffallocation.rezteche.com,65.108.243.73"
+              echo "CORS_ALLOWED_ORIGINS=https://staffallocation.rezteche.com"
+              echo "CSRF_TRUSTED_ORIGINS=https://staffallocation.rezteche.com"
+              echo "EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend"
+              echo "EMAIL_HOST=mail.privateemail.com"
+              echo "EMAIL_PORT=587"
+              echo "EMAIL_USE_TLS=True"
+              echo "EMAIL_HOST_USER=${EMAIL_HOST_USER}"
+              echo "EMAIL_APP_PASSWORD=${EMAIL_APP_PASSWORD}"
+              echo "DEFAULT_FROM_EMAIL=Staff Allocation <info@rezteche.com>"
+              echo "FRONTEND_URL=https://staffallocation.rezteche.com"
+              echo "SECURE_SSL_REDIRECT=False"
+              echo "SESSION_COOKIE_SECURE=True"
+              echo "CSRF_COOKIE_SECURE=True"
+              echo "REACT_APP_API_URL=https://staffallocation.rezteche.com/api"
+            } > /var/www/bunnings-ssa/.env
             chmod 600 /var/www/bunnings-ssa/.env
             cd /var/www/bunnings-ssa
             git fetch origin main
