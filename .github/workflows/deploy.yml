@@ -25,7 +25,6 @@ jobs:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          DEBUG: ${{ secrets.DEBUG }}
           DB_ENGINE: ${{ secrets.DB_ENGINE }}
           DB_NAME: ${{ secrets.DB_NAME }}
           DB_USER: ${{ secrets.DB_USER }}
@@ -45,12 +44,9 @@ jobs:
           REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
         run: |
           required_vars=(
-            SERVER_HOST SERVER_USER SECRET_KEY DEBUG
-            DB_ENGINE DB_NAME DB_USER DB_PASSWORD DB_HOST DB_PORT
-            ALLOWED_HOSTS CSRF_TRUSTED_ORIGINS CORS_ALLOWED_ORIGINS
-            EMAIL_HOST_USER EMAIL_APP_PASSWORD DEFAULT_FROM_EMAIL
-            FRONTEND_URL SECURE_SSL_REDIRECT SESSION_COOKIE_SECURE CSRF_COOKIE_SECURE
-            REACT_APP_API_URL
+            SERVER_HOST SERVER_USER SECRET_KEY
+            DB_PASSWORD
+            EMAIL_HOST_USER EMAIL_APP_PASSWORD
           )
 
           for var_name in "${required_vars[@]}"; do
@@ -64,7 +60,7 @@ jobs:
             {
               echo "DJANGO_SETTINGS_MODULE=backend.settings.production"
               echo "SECRET_KEY=${SECRET_KEY}"
-              echo "DEBUG=${DEBUG}"
+              echo "DEBUG=False"
               echo "DB_ENGINE=${DB_ENGINE}"
               echo "DB_NAME=${DB_NAME}"
               echo "DB_USER=${DB_USER}"
