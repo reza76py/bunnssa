@@ -163,19 +163,20 @@ def _send_allocation_emails(result):
     """
     smtp_sender = settings.EMAIL_HOST_USER
     creator_email = (result.created_by.email or '').strip()
-    creator_name = (result.created_by.get_full_name() or result.created_by.username).strip()
 
-    from_email = settings.DEFAULT_FROM_EMAIL
+    from_email = smtp_sender
     reply_to = []
+    cc_list = []
 
     if creator_email:
-        from_email = f'{creator_name} <{creator_email}>'
         reply_to = [creator_email]
+        cc_list = [creator_email]
 
     print(f"[EMAIL] Starting email dispatch for allocation #{result.id}")
     print(f"[EMAIL] EMAIL_HOST_USER configured: {bool(smtp_sender)}")
     print(f"[EMAIL] Display FROM set to: {from_email}")
     print(f"[EMAIL] Reply-To set to: {reply_to[0] if reply_to else '[NONE]'}")
+    print(f"[EMAIL] CC set to: {cc_list[0] if cc_list else '[NONE]'}")
 
     if not smtp_sender:
         print('[EMAIL] Skipping all emails because EMAIL_HOST_USER is empty.')
@@ -191,6 +192,7 @@ def _send_allocation_emails(result):
             body=message,
             from_email=from_email,
             to=[recipient],
+            cc=cc_list,
             reply_to=reply_to,
             connection=connection,
             headers={'Sender': smtp_sender},
