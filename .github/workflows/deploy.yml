@@ -24,7 +24,6 @@ jobs:
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
-          DJANGO_SETTINGS_MODULE: ${{ secrets.DJANGO_SETTINGS_MODULE }}
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           DEBUG: ${{ secrets.DEBUG }}
           DB_ENGINE: ${{ secrets.DB_ENGINE }}
@@ -36,10 +35,6 @@ jobs:
           ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
           CSRF_TRUSTED_ORIGINS: ${{ secrets.CSRF_TRUSTED_ORIGINS }}
           CORS_ALLOWED_ORIGINS: ${{ secrets.CORS_ALLOWED_ORIGINS }}
-          EMAIL_BACKEND: ${{ secrets.EMAIL_BACKEND }}
-          EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
-          EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
-          EMAIL_USE_TLS: ${{ secrets.EMAIL_USE_TLS }}
           EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
           EMAIL_APP_PASSWORD: ${{ secrets.EMAIL_APP_PASSWORD }}
           DEFAULT_FROM_EMAIL: ${{ secrets.DEFAULT_FROM_EMAIL }}
@@ -49,9 +44,25 @@ jobs:
           CSRF_COOKIE_SECURE: ${{ secrets.CSRF_COOKIE_SECURE }}
           REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
         run: |
+          required_vars=(
+            SERVER_HOST SERVER_USER SECRET_KEY DEBUG
+            DB_ENGINE DB_NAME DB_USER DB_PASSWORD DB_HOST DB_PORT
+            ALLOWED_HOSTS CSRF_TRUSTED_ORIGINS CORS_ALLOWED_ORIGINS
+            EMAIL_HOST_USER EMAIL_APP_PASSWORD DEFAULT_FROM_EMAIL
+            FRONTEND_URL SECURE_SSL_REDIRECT SESSION_COOKIE_SECURE CSRF_COOKIE_SECURE
+            REACT_APP_API_URL
+          )
+
+          for var_name in "${required_vars[@]}"; do
+            if [ -z "${!var_name}" ]; then
+              echo "Missing required value: ${var_name}" >&2
+              exit 1
+            fi
+          done
+
           ssh -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_HOST} <<EOF
             {
-              echo "DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}"
+              echo "DJANGO_SETTINGS_MODULE=backend.settings.production"
               echo "SECRET_KEY=${SECRET_KEY}"
               echo "DEBUG=${DEBUG}"
               echo "DB_ENGINE=${DB_ENGINE}"
@@ -63,10 +74,10 @@ jobs:
               echo "ALLOWED_HOSTS=${ALLOWED_HOSTS}"
               echo "CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}"
               echo "CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}"
-              echo "EMAIL_BACKEND=${EMAIL_BACKEND}"
-              echo "EMAIL_HOST=${EMAIL_HOST}"
-              echo "EMAIL_PORT=${EMAIL_PORT}"
-              echo "EMAIL_USE_TLS=${EMAIL_USE_TLS}"
+              echo "EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend"
+              echo "EMAIL_HOST=mail.privateemail.com"
+              echo "EMAIL_PORT=587"
+              echo "EMAIL_USE_TLS=True"
               echo "EMAIL_HOST_USER=${EMAIL_HOST_USER}"
               echo "EMAIL_APP_PASSWORD=${EMAIL_APP_PASSWORD}"
               echo "DEFAULT_FROM_EMAIL=${DEFAULT_FROM_EMAIL}"
