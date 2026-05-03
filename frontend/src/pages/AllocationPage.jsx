@@ -215,7 +215,7 @@ export default function AllocationPage() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
+              gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
               gap: 10,
               marginBottom: "1.5rem",
             }}
@@ -255,7 +255,7 @@ export default function AllocationPage() {
             center={mapCenter}
             zoom={10}
             style={{
-              height: 380,
+              height: "clamp(260px, 45vh, 380px)",
               borderRadius: 10,
               marginBottom: "1.5rem",
               border: "1px solid #e5e5e2",
@@ -338,6 +338,7 @@ export default function AllocationPage() {
           <div
             style={{
               display: "flex",
+              flexWrap: "wrap",
               gap: 16,
               marginBottom: "1rem",
               fontSize: 12,
@@ -356,6 +357,8 @@ export default function AllocationPage() {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
+                  flexWrap: "wrap",
+                  gap: 8,
                   marginBottom: 10,
                 }}
               >

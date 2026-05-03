@@ -148,40 +148,42 @@ export default function StoresPage() {
       {loading ? (
         <p style={s.muted}>Loading…</p>
       ) : (
-        <table style={s.table}>
-          <thead>
-            <tr>
-              {["Store name", "Lat", "Lng", "Weekly value", ""].map((h) => (
-                <th key={h} style={s.th}>
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {stores.map((st) => (
-              <tr key={st.id} style={s.tr}>
-                <td style={s.td}>{st.name}</td>
-                <td style={s.td}>{parseFloat(st.latitude).toFixed(4)}</td>
-                <td style={s.td}>{parseFloat(st.longitude).toFixed(4)}</td>
-                <td style={s.td}>
-                  ${Number(st.weekly_delivery_value).toLocaleString()}
-                </td>
-                <td style={s.td}>
-                  <button style={s.btnSm} onClick={() => edit(st)}>
-                    Edit
-                  </button>
-                  <button
-                    style={{ ...s.btnSm, color: "#c0392b" }}
-                    onClick={() => del(st.id)}
-                  >
-                    Remove
-                  </button>
-                </td>
+        <div style={s.tableWrap}>
+          <table style={s.table}>
+            <thead>
+              <tr>
+                {["Store name", "Lat", "Lng", "Weekly value", ""].map((h) => (
+                  <th key={h} style={s.th}>
+                    {h}
+                  </th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {stores.map((st) => (
+                <tr key={st.id} style={s.tr}>
+                  <td style={s.td}>{st.name}</td>
+                  <td style={s.td}>{parseFloat(st.latitude).toFixed(4)}</td>
+                  <td style={s.td}>{parseFloat(st.longitude).toFixed(4)}</td>
+                  <td style={s.td}>
+                    ${Number(st.weekly_delivery_value).toLocaleString()}
+                  </td>
+                  <td style={s.td}>
+                    <button style={s.btnSm} onClick={() => edit(st)}>
+                      Edit
+                    </button>
+                    <button
+                      style={{ ...s.btnSm, color: "#c0392b" }}
+                      onClick={() => del(st.id)}
+                    >
+                      Remove
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

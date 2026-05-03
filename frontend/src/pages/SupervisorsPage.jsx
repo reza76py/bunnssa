@@ -111,40 +111,42 @@ export default function SupervisorsPage() {
       {loading ? (
         <p style={s.muted}>Loading…</p>
       ) : (
-        <table style={s.table}>
-          <thead>
-            <tr>
-              {["Name", "Email", "Latitude", "Longitude", ""].map((h) => (
-                <th key={h} style={s.th}>
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((item) => (
-              <tr key={item.id} style={s.tr}>
-                <td style={s.td}>{item.name}</td>
-                <td style={s.td}>
-                  {item.email || <span style={s.muted}>—</span>}
-                </td>
-                <td style={s.td}>{parseFloat(item.latitude).toFixed(4)}</td>
-                <td style={s.td}>{parseFloat(item.longitude).toFixed(4)}</td>
-                <td style={s.td}>
-                  <button style={s.btnSm} onClick={() => edit(item)}>
-                    Edit
-                  </button>
-                  <button
-                    style={{ ...s.btnSm, color: "#c0392b" }}
-                    onClick={() => del(item.id)}
-                  >
-                    Remove
-                  </button>
-                </td>
+        <div style={s.tableWrap}>
+          <table style={s.table}>
+            <thead>
+              <tr>
+                {["Name", "Email", "Latitude", "Longitude", ""].map((h) => (
+                  <th key={h} style={s.th}>
+                    {h}
+                  </th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {items.map((item) => (
+                <tr key={item.id} style={s.tr}>
+                  <td style={s.td}>{item.name}</td>
+                  <td style={s.td}>
+                    {item.email || <span style={s.muted}>—</span>}
+                  </td>
+                  <td style={s.td}>{parseFloat(item.latitude).toFixed(4)}</td>
+                  <td style={s.td}>{parseFloat(item.longitude).toFixed(4)}</td>
+                  <td style={s.td}>
+                    <button style={s.btnSm} onClick={() => edit(item)}>
+                      Edit
+                    </button>
+                    <button
+                      style={{ ...s.btnSm, color: "#c0392b" }}
+                      onClick={() => del(item.id)}
+                    >
+                      Remove
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

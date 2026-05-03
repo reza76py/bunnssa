@@ -114,9 +114,10 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     background: "#f5f5f3",
+    padding: "1rem",
   },
   card: {
-    width: 400,
+    width: "min(400px, 100%)",
     background: "#fff",
     border: "1px solid #e5e5e2",
     borderRadius: 12,

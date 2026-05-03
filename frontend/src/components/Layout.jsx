@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 
 const navItems = [
@@ -11,6 +12,14 @@ const navItems = [
 
 export default function Layout() {
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 900);
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth <= 900);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   const logout = () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
@@ -18,13 +27,33 @@ export default function Layout() {
   };
 
   return (
-    <div style={styles.shell}>
-      <aside style={styles.sidebar}>
+    <div
+      style={{
+        ...styles.shell,
+        flexDirection: isMobile ? "column" : "row",
+      }}
+    >
+      <aside
+        style={{
+          ...styles.sidebar,
+          width: isMobile ? "100%" : 220,
+          padding: isMobile ? "1rem 0" : "1.5rem 0",
+        }}
+      >
         <div style={styles.brand}>
           <span style={styles.brandName}>Staff Allocation</span>
-          <span style={styles.brandSub}>Staff Allocation</span>
+          {!isMobile && <span style={styles.brandSub}>Staff Allocation</span>}
         </div>
-        <nav style={styles.nav}>
+        <nav
+          style={{
+            ...styles.nav,
+            display: isMobile ? "flex" : "block",
+            overflowX: isMobile ? "auto" : "visible",
+            whiteSpace: isMobile ? "nowrap" : "normal",
+            padding: isMobile ? "0.75rem" : "1rem 0",
+            gap: isMobile ? 8 : 0,
+          }}
+        >
           {navItems.map(({ to, label, icon }) => (
             <NavLink
               key={to}
@@ -32,6 +61,14 @@ export default function Layout() {
               end={to === "/"}
               style={({ isActive }) => ({
                 ...styles.navItem,
+                ...(isMobile
+                  ? {
+                      display: "inline-flex",
+                      borderRadius: 999,
+                      border: "1px solid #333",
+                      padding: "8px 12px",
+                    }
+                  : {}),
                 ...(isActive ? styles.navActive : {}),
               })}
             >
@@ -40,7 +77,13 @@ export default function Layout() {
             </NavLink>
           ))}
         </nav>
-        <button style={styles.logout} onClick={logout}>
+        <button
+          style={{
+            ...styles.logout,
+            margin: isMobile ? "0.5rem 0.75rem 0" : "0 1.25rem",
+          }}
+          onClick={logout}
+        >
           Sign out
         </button>
       </aside>
@@ -54,11 +97,9 @@ export default function Layout() {
 const styles = {
   shell: { display: "flex", minHeight: "100vh", background: "#f5f5f3" },
   sidebar: {
-    width: 220,
     background: "#1a1a18",
     display: "flex",
     flexDirection: "column",
-    padding: "1.5rem 0",
     flexShrink: 0,
   },
   brand: { padding: "0 1.25rem 1.5rem", borderBottom: "1px solid #333" },
@@ -78,7 +119,6 @@ const styles = {
   navActive: { color: "#fff", background: "#2c2c2a" },
   icon: { fontSize: 14, width: 18 },
   logout: {
-    margin: "0 1.25rem",
     padding: "7px",
     fontSize: 13,
     color: "#888",
@@ -87,5 +127,5 @@ const styles = {
     borderRadius: 6,
     cursor: "pointer",
   },
-  main: { flex: 1, overflowY: "auto" },
+  main: { flex: 1, overflowY: "auto", minWidth: 0 },
 };
