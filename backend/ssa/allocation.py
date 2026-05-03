@@ -1,8 +1,10 @@
 import logging
 import math
+
 import requests
 from django.conf import settings
 from django.core.mail import EmailMessage, get_connection
+from django.utils.timezone import localdate
 from .models import Store, Supervisor, Member, AllocationResult, StoreAssignment, MemberAssignment
 
 logger = logging.getLogger(__name__)
@@ -163,20 +165,18 @@ def _send_allocation_emails(result):
     """
     smtp_sender = settings.EMAIL_HOST_USER
     creator_email = (result.created_by.email or '').strip()
+    creator_name = (result.created_by.first_name or result.created_by.username or 'there').strip()
 
     from_email = smtp_sender
     reply_to = []
-    cc_list = []
 
     if creator_email:
         reply_to = [creator_email]
-        cc_list = [creator_email]
 
     print(f"[EMAIL] Starting email dispatch for allocation #{result.id}")
     print(f"[EMAIL] EMAIL_HOST_USER configured: {bool(smtp_sender)}")
     print(f"[EMAIL] Display FROM set to: {from_email}")
     print(f"[EMAIL] Reply-To set to: {reply_to[0] if reply_to else '[NONE]'}")
-    print(f"[EMAIL] CC set to: {cc_list[0] if cc_list else '[NONE]'}")
 
     if not smtp_sender:
         print('[EMAIL] Skipping all emails because EMAIL_HOST_USER is empty.')
@@ -192,7 +192,6 @@ def _send_allocation_emails(result):
             body=message,
             from_email=from_email,
             to=[recipient],
-            cc=cc_list,
             reply_to=reply_to,
             connection=connection,
             headers={'Sender': smtp_sender},
@@ -211,19 +210,38 @@ def _send_allocation_emails(result):
 
     assignment_count = assignments.count()
     print(f"[EMAIL] Assignments to process: {assignment_count}")
+    summary_store_lines = []
+    total_weekly_value = 0
+    total_members_deployed = 0
 
     for assignment in assignments:
         store = assignment.store
         supervisor = assignment.supervisor
+        total_weekly_value += float(store.weekly_delivery_value)
         print(
             f"[EMAIL] Processing store='{store.name}' supervisor='{supervisor.name}' "
             f"supervisor_email='{supervisor.email or '[EMPTY]'}'"
         )
 
+        assignment_members = list(assignment.member_assignments.all())
+        total_members_deployed += len(assignment_members)
         member_lines = [
             f'  - {ma.member.name} ({ma.distance_km} km from store)'
-            for ma in assignment.member_assignments.all()
+            for ma in assignment_members
         ] or ['  No team members assigned']
+
+        summary_member_lines = [
+            f'- {ma.member.name} ({ma.distance_km} km)'
+            for ma in assignment_members
+        ] or ['No members assigned']
+        summary_store_lines.append(
+            (
+                f'📍 {store.name} (${float(store.weekly_delivery_value):,.0f}/wk)\n'
+                f'   Supervisor: {supervisor.name} ({assignment.supervisor_distance_km} km)\n'
+                '   Members:\n'
+                + '\n'.join(f'   {line}' for line in summary_member_lines)
+            )
+        )
 
         # ── Supervisor email ──────────────────────────────────────────────
         if supervisor.email:
@@ -287,6 +305,43 @@ def _send_allocation_emails(result):
                     'Failed to send email to member %s <%s>: %s',
                     member.name, member.email, exc,
                 )
+
+    if creator_email:
+        try:
+            summary_body = (
+                f'Hi {creator_name},\n\n'
+                'Your allocation has been completed successfully.\n'
+                'Here is a summary:\n\n'
+                + '\n\n'.join(summary_store_lines) +
+                f'\n\nTotal: {assignment_count} stores, ${total_weekly_value:,.0f} weekly value\n'
+                f'{total_members_deployed} members deployed\n\n'
+                'Regards,\n'
+                'Staff Allocation System'
+            )
+            summary_email = EmailMessage(
+                subject=f'Staff Allocation Summary - {localdate().isoformat()}',
+                body=summary_body,
+                from_email=from_email,
+                to=[creator_email],
+                reply_to=[smtp_sender],
+                connection=connection,
+                headers={'Sender': smtp_sender},
+            )
+            summary_mime_message = summary_email.message()
+            connection.connection.sendmail(
+                smtp_sender,
+                summary_email.recipients(),
+                summary_mime_message.as_bytes(linesep='\r\n'),
+            )
+            logger.info('Sent allocation summary email to creator %s <%s>', result.created_by.username, creator_email)
+        except Exception as exc:
+            print(f"SUMMARY EMAIL FAILED: {str(exc)}")
+            logger.error(
+                'Failed to send allocation summary email to creator %s <%s>: %s',
+                result.created_by.username,
+                creator_email,
+                exc,
+            )
 
     print(f"[EMAIL] Email dispatch finished for allocation #{result.id}")
 
