@@ -21,11 +21,12 @@ jobs:
           ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy on production server
-        env:
-          SERVER_HOST: ${{ secrets.SERVER_HOST }}
-          SERVER_USER: ${{ secrets.SERVER_USER }}
         run: |
-          ssh -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_HOST} << EOF
-          set -euo pipefail
-          chmod +x /var/www/bunnings-ssa/deploy.sh && cd /var/www/bunnings-ssa && git fetch origin main && git reset --hard origin/main && ./deploy.sh
-          EOF
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} '
+            chmod +x /var/www/bunnings-ssa/deploy.sh
+            cd /var/www/bunnings-ssa
+            git fetch origin main
+            git reset --hard origin/main
+            chmod +x deploy.sh
+            bash deploy.sh
+          '
