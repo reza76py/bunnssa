@@ -21,12 +21,66 @@ jobs:
           ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy on production server
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          DJANGO_SETTINGS_MODULE: ${{ secrets.DJANGO_SETTINGS_MODULE }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DEBUG: ${{ secrets.DEBUG }}
+          DB_ENGINE: ${{ secrets.DB_ENGINE }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
+          CSRF_TRUSTED_ORIGINS: ${{ secrets.CSRF_TRUSTED_ORIGINS }}
+          CORS_ALLOWED_ORIGINS: ${{ secrets.CORS_ALLOWED_ORIGINS }}
+          EMAIL_BACKEND: ${{ secrets.EMAIL_BACKEND }}
+          EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
+          EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
+          EMAIL_USE_TLS: ${{ secrets.EMAIL_USE_TLS }}
+          EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
+          EMAIL_APP_PASSWORD: ${{ secrets.EMAIL_APP_PASSWORD }}
+          DEFAULT_FROM_EMAIL: ${{ secrets.DEFAULT_FROM_EMAIL }}
+          FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+          SECURE_SSL_REDIRECT: ${{ secrets.SECURE_SSL_REDIRECT }}
+          SESSION_COOKIE_SECURE: ${{ secrets.SESSION_COOKIE_SECURE }}
+          CSRF_COOKIE_SECURE: ${{ secrets.CSRF_COOKIE_SECURE }}
+          REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} '
+          ssh -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_HOST} <<EOF
+            {
+              echo "DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}"
+              echo "SECRET_KEY=${SECRET_KEY}"
+              echo "DEBUG=${DEBUG}"
+              echo "DB_ENGINE=${DB_ENGINE}"
+              echo "DB_NAME=${DB_NAME}"
+              echo "DB_USER=${DB_USER}"
+              echo "DB_PASSWORD=${DB_PASSWORD}"
+              echo "DB_HOST=${DB_HOST}"
+              echo "DB_PORT=${DB_PORT}"
+              echo "ALLOWED_HOSTS=${ALLOWED_HOSTS}"
+              echo "CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}"
+              echo "CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}"
+              echo "EMAIL_BACKEND=${EMAIL_BACKEND}"
+              echo "EMAIL_HOST=${EMAIL_HOST}"
+              echo "EMAIL_PORT=${EMAIL_PORT}"
+              echo "EMAIL_USE_TLS=${EMAIL_USE_TLS}"
+              echo "EMAIL_HOST_USER=${EMAIL_HOST_USER}"
+              echo "EMAIL_APP_PASSWORD=${EMAIL_APP_PASSWORD}"
+              echo "DEFAULT_FROM_EMAIL=${DEFAULT_FROM_EMAIL}"
+              echo "FRONTEND_URL=${FRONTEND_URL}"
+              echo "SECURE_SSL_REDIRECT=${SECURE_SSL_REDIRECT}"
+              echo "SESSION_COOKIE_SECURE=${SESSION_COOKIE_SECURE}"
+              echo "CSRF_COOKIE_SECURE=${CSRF_COOKIE_SECURE}"
+              echo "REACT_APP_API_URL=${REACT_APP_API_URL}"
+            } > /var/www/bunnings-ssa/.env
+            chmod 600 /var/www/bunnings-ssa/.env
             chmod +x /var/www/bunnings-ssa/deploy.sh
             cd /var/www/bunnings-ssa
             git fetch origin main
             git reset --hard origin/main
             chmod +x deploy.sh
             bash deploy.sh
-          '
+          EOF
