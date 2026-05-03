@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-APP_DIR="/srv/bunnings-ssa"
+APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 COMPOSE_FILE="docker-compose.prod.yml"
 COMPOSE="docker compose -f ${COMPOSE_FILE}"
 
@@ -13,7 +13,7 @@ git pull --ff-only origin main
 $COMPOSE build --pull
 
 # Start DB first and wait for health
-$COMPOSE up -d db
+$COMPOSE up -d --wait db
 
 # Rolling backend refresh with two replicas to reduce downtime
 $COMPOSE up -d --no-deps --scale backend=2 backend

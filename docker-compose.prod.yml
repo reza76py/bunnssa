@@ -8,8 +8,6 @@ services:
       - ./.env
     environment:
       MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
     volumes:
       - mysql_prod_data:/var/lib/mysql
@@ -21,7 +19,7 @@ services:
           "ping",
           "-h",
           "localhost",
-          "-u${DB_USER}",
+          "-uroot",
           "-p${DB_PASSWORD}",
         ]
       interval: 10s
@@ -58,7 +56,7 @@ services:
         REACT_APP_API_URL: ${REACT_APP_API_URL}
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "8080:80"
     depends_on:
       backend:
         condition: service_healthy
