@@ -3,40 +3,34 @@ import { authApi } from "../api";
 import { s } from "../styles/common";
 
 const empty = {
-  email_host: "smtp.gmail.com",
-  email_port: 587,
-  email_host_user: "",
-  email_app_password: "",
-  from_name: "Bunnings SSA",
+  first_name: "",
+  last_name: "",
+  email: "",
 };
 
 export default function SettingsPage() {
   const [form, setForm] = useState(empty);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [hasPassword, setHasPassword] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
   useEffect(() => {
-    load();
+    loadProfile();
   }, []);
 
-  const load = async () => {
+  const loadProfile = async () => {
     setLoading(true);
     setError("");
     try {
-      const { data } = await authApi.getEmailSettings();
+      const { data } = await authApi.profile();
       setForm({
-        email_host: data.email_host || "smtp.gmail.com",
-        email_port: data.email_port || 587,
-        email_host_user: data.email_host_user || "",
-        email_app_password: "",
-        from_name: data.from_name || "Bunnings SSA",
+        first_name: data.first_name || "",
+        last_name: data.last_name || "",
+        email: data.email || "",
       });
-      setHasPassword(Boolean(data.has_app_password));
     } catch {
-      setError("Failed to load email settings.");
+      setError("Failed to load profile settings.");
     } finally {
       setLoading(false);
     }
@@ -47,115 +41,76 @@ export default function SettingsPage() {
     setError("");
     setSuccess("");
     try {
-      const payload = {
-        email_host: form.email_host.trim(),
-        email_port: Number(form.email_port),
-        email_host_user: form.email_host_user.trim(),
-        from_name: form.from_name.trim() || "Bunnings SSA",
-      };
-      if (form.email_app_password.trim()) {
-        payload.email_app_password = form.email_app_password;
-      }
-      const { data } = await authApi.updateEmailSettings(payload);
-      setHasPassword(Boolean(data.has_app_password));
-      setForm({ ...form, email_app_password: "" });
-      setSuccess("Email settings saved.");
+      await authApi.updateProfile({
+        first_name: form.first_name.trim(),
+        last_name: form.last_name.trim(),
+        email: form.email.trim(),
+      });
+      setSuccess("Profile settings saved.");
     } catch (e) {
       const data = e.response?.data;
       if (typeof data === "string") {
         setError(data);
-        return;
-      }
-      if (data && typeof data === "object") {
+      } else if (data && typeof data === "object") {
         const first = Object.entries(data)[0];
         if (first) {
           const [field, message] = first;
           setError(
             `${field}: ${Array.isArray(message) ? message[0] : message}`,
           );
-          return;
+        } else {
+          setError("Failed to save profile settings.");
         }
+      } else {
+        setError("Failed to save profile settings.");
       }
-      setError("Failed to save email settings.");
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading)
+  if (loading) {
     return (
       <div style={s.page}>
         <p style={s.muted}>Loading settings...</p>
       </div>
     );
+  }
 
   return (
     <div style={s.page}>
-      <h1 style={s.h1}>Email Settings</h1>
+      <h1 style={s.h1}>Settings</h1>
       <div style={s.formCard}>
-        <h3 style={s.h3}>Your SMTP Sender Profile</h3>
+        <h3 style={s.h3}>Profile Settings</h3>
         <div style={s.grid2}>
           <div>
-            <label style={s.fieldLabel}>SMTP Host</label>
+            <label style={s.fieldLabel}>First Name</label>
             <input
               style={s.input}
-              value={form.email_host}
-              onChange={(e) => setForm({ ...form, email_host: e.target.value })}
+              value={form.first_name}
+              onChange={(e) => setForm({ ...form, first_name: e.target.value })}
             />
           </div>
           <div>
-            <label style={s.fieldLabel}>SMTP Port</label>
+            <label style={s.fieldLabel}>Last Name</label>
             <input
               style={s.input}
-              type="number"
-              value={form.email_port}
-              onChange={(e) => setForm({ ...form, email_port: e.target.value })}
+              value={form.last_name}
+              onChange={(e) => setForm({ ...form, last_name: e.target.value })}
             />
           </div>
           <div style={{ gridColumn: "span 2" }}>
-            <label style={s.fieldLabel}>Gmail Address</label>
+            <label style={s.fieldLabel}>Email</label>
             <input
               style={s.input}
               type="email"
-              value={form.email_host_user}
-              onChange={(e) =>
-                setForm({ ...form, email_host_user: e.target.value })
-              }
-              placeholder="you@gmail.com"
-            />
-          </div>
-          <div style={{ gridColumn: "span 2" }}>
-            <label style={s.fieldLabel}>Gmail App Password</label>
-            <input
-              style={s.input}
-              type="password"
-              value={form.email_app_password}
-              onChange={(e) =>
-                setForm({ ...form, email_app_password: e.target.value })
-              }
-              placeholder={
-                hasPassword
-                  ? "Leave blank to keep existing password"
-                  : "Paste your 16-char app password"
-              }
-            />
-          </div>
-          <div style={{ gridColumn: "span 2" }}>
-            <label style={s.fieldLabel}>From Name</label>
-            <input
-              style={s.input}
-              value={form.from_name}
-              onChange={(e) => setForm({ ...form, from_name: e.target.value })}
-              placeholder="Bunnings SSA"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              required
             />
           </div>
         </div>
 
-        {hasPassword && (
-          <p style={{ ...s.muted, marginTop: 8 }}>
-            Stored app password is set.
-          </p>
-        )}
         {error && <p style={{ ...s.error, marginTop: 8 }}>{error}</p>}
         {success && (
           <p style={{ color: "#2e7d32", fontSize: 13, marginTop: 8 }}>

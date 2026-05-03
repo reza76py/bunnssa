@@ -74,9 +74,9 @@ export const authApi = {
       },
     ),
   register: (data) => api.post("/auth/register/", data),
+  verifyEmail: (uid, token) => api.get(`/auth/verify-email/${uid}/${token}/`),
   profile: () => api.get("/auth/profile/"),
-  getEmailSettings: () => api.get("/auth/email-settings/"),
-  updateEmailSettings: (data) => api.put("/auth/email-settings/", data),
+  updateProfile: (data) => api.put("/auth/profile/", data),
 };
 
 export default api;

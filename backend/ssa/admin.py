@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.db.models import Count, Sum
 from django.db.models.functions import Coalesce
 
-from .models import AllocationResult, Member, MemberAssignment, Store, StoreAssignment, Supervisor, UserEmailSettings
+from .models import AllocationResult, Member, MemberAssignment, Store, StoreAssignment, Supervisor
 
 try:
     admin.site.unregister(User)
@@ -158,12 +158,6 @@ class StoreAssignmentAdmin(admin.ModelAdmin):
 @admin.register(MemberAssignment)
 class MemberAssignmentAdmin(admin.ModelAdmin):
     list_display = ('store_assignment', 'member', 'distance_km')
-
-
-@admin.register(UserEmailSettings)
-class UserEmailSettingsAdmin(admin.ModelAdmin):
-    list_display = ('user', 'email_host', 'email_port', 'email_host_user', 'from_name', 'updated_at')
-    search_fields = ('user__username', 'email_host_user', 'from_name')
 
 
 _original_each_context = admin.site.each_context

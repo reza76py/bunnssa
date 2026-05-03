@@ -1,6 +1,6 @@
 # Bunnings SSA
 
-Bunnings SSA is a staff allocation platform with a Django REST API backend and a React frontend. It supports multi-user ownership, road-distance allocation, per-user SMTP credentials, and a customized Django admin panel for super-admin operations.
+Bunnings SSA is a staff allocation platform with a Django REST API backend and a React frontend. It supports multi-user ownership, road-distance allocation, centralized SMTP delivery with client-visible sender headers, email verification on registration, and a customized Django admin panel for super-admin operations.
 
 ## Repository Layout
 
@@ -115,6 +115,14 @@ Production:
 ```env
 REACT_APP_API_URL=https://api.example.com/api
 ```
+
+## Allocation Email Behavior
+
+Allocation emails are sent through the centrally configured SMTP transport (`EMAIL_HOST_USER`).
+
+- Visible `From` and `Reply-To` use the allocation creator's registered profile email.
+- Recipients see and can reply to the client email.
+- No per-user SMTP or OAuth setup is required.
 
 ## Settings Split
 

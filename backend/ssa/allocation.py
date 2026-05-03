@@ -1,9 +1,9 @@
 import logging
 import math
 import requests
-from django.core.mail import get_connection
-from django.core.mail import send_mail
-from .models import Store, Supervisor, Member, AllocationResult, StoreAssignment, MemberAssignment, UserEmailSettings
+from django.conf import settings
+from django.core.mail import EmailMessage, get_connection
+from .models import Store, Supervisor, Member, AllocationResult, StoreAssignment, MemberAssignment
 
 logger = logging.getLogger(__name__)
 
@@ -161,37 +161,47 @@ def _send_allocation_emails(result):
     Failures for individual recipients are logged but never raise so the
     allocation result is always returned to the caller.
     """
-    email_settings = UserEmailSettings.objects.filter(user=result.created_by).first()
-    if not email_settings:
-        print('[EMAIL] No user email settings found. Skipping all emails.')
-        logger.warning('No UserEmailSettings found for user=%s', result.created_by_id)
-        return
+    smtp_sender = settings.EMAIL_HOST_USER
+    creator_email = (result.created_by.email or '').strip()
+    creator_name = (result.created_by.get_full_name() or result.created_by.username).strip()
 
-    app_password = email_settings.get_app_password()
-    from_address = email_settings.email_host_user
-    from_name = (email_settings.from_name or 'Bunnings SSA').strip()
-    from_email = f'{from_name} <{from_address}>' if from_address else ''
+    from_email = settings.DEFAULT_FROM_EMAIL
+    reply_to = []
 
-    print(f"[EMAIL] Using user email settings id={email_settings.id} for user={result.created_by_id}")
+    if creator_email:
+        from_email = f'{creator_name} <{creator_email}>'
+        reply_to = [creator_email]
+
     print(f"[EMAIL] Starting email dispatch for allocation #{result.id}")
-    print(f"[EMAIL] EMAIL_HOST_USER configured: {bool(from_address)}")
-    if not from_address:
-        print('[EMAIL] Skipping all emails because user email_host_user is empty.')
-        logger.warning('UserEmailSettings.email_host_user is empty for user=%s', result.created_by_id)
-        return
-    if not app_password:
-        print('[EMAIL] Skipping all emails because user email_app_password is empty.')
-        logger.warning('UserEmailSettings.email_app_password is empty for user=%s', result.created_by_id)
+    print(f"[EMAIL] EMAIL_HOST_USER configured: {bool(smtp_sender)}")
+    print(f"[EMAIL] Display FROM set to: {from_email}")
+    print(f"[EMAIL] Reply-To set to: {reply_to[0] if reply_to else '[NONE]'}")
+
+    if not smtp_sender:
+        print('[EMAIL] Skipping all emails because EMAIL_HOST_USER is empty.')
+        logger.warning('EMAIL_HOST_USER is empty. Skipping allocation emails for user=%s', result.created_by_id)
         return
 
-    connection = get_connection(
-        backend='django.core.mail.backends.smtp.EmailBackend',
-        host=email_settings.email_host,
-        port=email_settings.email_port,
-        username=from_address,
-        password=app_password,
-        use_tls=True,
-    )
+    connection = get_connection()
+    connection.open()
+
+    def _send_via_central_smtp(subject, message, recipient):
+        email = EmailMessage(
+            subject=subject,
+            body=message,
+            from_email=from_email,
+            to=[recipient],
+            reply_to=reply_to,
+            connection=connection,
+            headers={'Sender': smtp_sender},
+        )
+
+        mime_message = email.message()
+        connection.connection.sendmail(
+            smtp_sender,
+            email.recipients(),
+            mime_message.as_bytes(linesep='\r\n'),
+        )
 
     assignments = result.assignments.select_related(
         'store', 'supervisor'
@@ -219,7 +229,7 @@ def _send_allocation_emails(result):
             try:
                 print(f"=== Sending to supervisor: {supervisor.email} ===")
                 print(f"=== ATTEMPTING EMAIL TO: {email_address} ===")
-                send_mail(
+                _send_via_central_smtp(
                     subject='Bunnings SSA - Your Store Assignment',
                     message=(
                         f'Hi {supervisor.name},\n\n'
@@ -230,10 +240,7 @@ def _send_allocation_emails(result):
                         + '\n'.join(member_lines) +
                         '\n\nRegards,\nBunnings SSA'
                     ),
-                    from_email=from_email,
-                    recipient_list=[email_address],
-                    fail_silently=False,
-                    connection=connection,
+                    recipient=email_address,
                 )
                 print("SUCCESS")
                 print(f"=== EMAIL SENT SUCCESSFULLY TO: {email_address} ===")
@@ -257,7 +264,7 @@ def _send_allocation_emails(result):
             try:
                 print(f"=== Sending to member: {member.email} ===")
                 print(f"=== ATTEMPTING EMAIL TO: {email_address} ===")
-                send_mail(
+                _send_via_central_smtp(
                     subject='Bunnings SSA - Your Assignment This Week',
                     message=(
                         f'Hi {member.name},\n\n'
@@ -267,10 +274,7 @@ def _send_allocation_emails(result):
                         f'Supervisor: {supervisor.name}\n\n'
                         f'Regards,\nBunnings SSA'
                     ),
-                    from_email=from_email,
-                    recipient_list=[email_address],
-                    fail_silently=False,
-                    connection=connection,
+                    recipient=email_address,
                 )
                 print("SUCCESS")
                 print(f"=== EMAIL SENT SUCCESSFULLY TO: {email_address} ===")
@@ -283,3 +287,8 @@ def _send_allocation_emails(result):
                 )
 
     print(f"[EMAIL] Email dispatch finished for allocation #{result.id}")
+
+    try:
+        connection.close()
+    except Exception:
+        pass
