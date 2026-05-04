@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { authApi } from "../api";
-import logo from "../assets/rezteche-logo.png";
+import rezTecheLogo from "../assets/rezteche-logo.png";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -31,19 +31,19 @@ export default function LoginPage() {
   return (
     <div style={styles.page}>
       <div style={styles.contentWrap}>
-        <div>
+        <div style={styles.infoBlock}>
           <div style={styles.infoTitle}>How It Works</div>
           <ol style={styles.infoList}>
             <li>
-              1. The highest-value stores are selected based on supervisor
+              The highest-value stores are selected based on supervisor
               availability.
             </li>
             <li>
-              2. The closest supervisors are assigned to each selected store by
+              The closest supervisors are assigned to each selected store by
               road distance.
             </li>
             <li>
-              3. Members are distributed proportionally across stores based on
+              Members are distributed proportionally across stores based on
               delivery value and availability.
             </li>
           </ol>
@@ -51,60 +51,73 @@ export default function LoginPage() {
           <div style={styles.infoTitleBenefits}>Benefits</div>
           <ol style={styles.infoList}>
             <li>
-              1. Optimised use of available members - no over or under
-              allocation.
+              Optimised use of available members - no over or under allocation.
             </li>
-            <li>2. Less travel - closest people always assigned first.</li>
-            <li>3. Saves hours of manual planning every week.</li>
+            <li>Less travel - closest people always assigned first.</li>
+            <li>Saves hours of manual planning every week.</li>
           </ol>
         </div>
 
         <div style={styles.card}>
-          <div style={{ textAlign: "center", marginBottom: "16px" }}>
-            <a href="https://rezteche.com" target="_blank" rel="noreferrer">
-              <img
-                src={logo}
-                alt="RezTeche"
-                style={{ height: "40px", width: "auto", margin: "0 auto" }}
-              />
+        <div style={styles.logo}>
+          <a
+            href="https://rezteche.com"
+            target="_blank"
+            rel="noreferrer"
+            style={styles.logoLink}
+          >
+            <img src={rezTecheLogo} alt="RezTeche" style={styles.logoImg} />
+          </a>
+          <span style={styles.logoText}>Staff Allocation System</span>
+          <span style={styles.logoSub}>
+            Powered by{" "}
+            <a
+              href="https://rezteche.com"
+              target="_blank"
+              rel="noreferrer"
+              style={styles.poweredLink}
+            >
+              RezTeche
             </a>
-          </div>
-          <div style={styles.logo}>
-            <span style={styles.logoText}>Staff Allocation System</span>
-          </div>
-          <form onSubmit={handleLogin}>
-            <div style={styles.field}>
-              <label style={styles.label}>Username</label>
-              <input
-                style={styles.input}
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-                autoFocus
-              />
-            </div>
-            <div style={styles.field}>
-              <label style={styles.label}>Password</label>
-              <input
-                style={styles.input}
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            {error && <p style={styles.error}>{error}</p>}
-            <button style={styles.btn} type="submit" disabled={loading}>
-              {loading ? "Signing in…" : "Sign in"}
-            </button>
-            <p style={styles.meta}>
-              Need an account?{" "}
-              <Link to="/register" style={styles.link}>
-                Register
-              </Link>
-            </p>
-          </form>
+          </span>
+          <span style={styles.logoHint}>
+            If you have an account, please sign in. Otherwise, register for a
+            new account.
+          </span>
         </div>
+        <form onSubmit={handleLogin}>
+          <div style={styles.field}>
+            <label style={styles.label}>Username</label>
+            <input
+              style={styles.input}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              autoFocus
+            />
+          </div>
+          <div style={styles.field}>
+            <label style={styles.label}>Password</label>
+            <input
+              style={styles.input}
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          {error && <p style={styles.error}>{error}</p>}
+          <button style={styles.btn} type="submit" disabled={loading}>
+            {loading ? "Signing in…" : "Sign in"}
+          </button>
+          <p style={styles.meta}>
+            Need an account?{" "}
+            <Link to="/register" style={styles.link}>
+              Register
+            </Link>
+          </p>
+        </form>
+      </div>
       </div>
     </div>
   );
@@ -162,13 +175,8 @@ const styles = {
     boxShadow: "0 4px 24px rgba(0,0,0,0.4)",
   },
   logo: { textAlign: "center", marginBottom: "1.5rem" },
-  logoLink: { display: "inline-block" },
-  logoImg: {
-    height: 40,
-    width: "auto",
-    objectFit: "contain",
-    marginBottom: 12,
-  },
+  logoLink: { display: "inline-block", marginBottom: ".75rem" },
+  logoImg: { height: 54, width: "auto", objectFit: "contain" },
   logoText: {
     display: "block",
     fontSize: 22,
