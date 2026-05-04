@@ -243,6 +243,25 @@ export default function AllocationPage() {
                 0,
               )}
             />
+            <StatCard
+              label="Total distance"
+              value={
+                routesLoading
+                  ? "..."
+                  : selected.assignments
+                      .reduce(
+                        (sum, a) =>
+                          sum +
+                          parseFloat(a.supervisor_distance_km) +
+                          a.member_assignments.reduce(
+                            (s, ma) => s + parseFloat(ma.distance_km),
+                            0,
+                          ),
+                        0,
+                      )
+                      .toFixed(1) + " km"
+              }
+            />
           </div>
 
           {routesLoading && (
@@ -420,6 +439,24 @@ export default function AllocationPage() {
                     </span>
                   )}
                 </div>
+              </div>
+              <div
+                style={{
+                  color: "#a0a0b8",
+                  fontSize: 12,
+                  marginTop: 8,
+                  textAlign: "right",
+                }}
+              >
+                Total distance:{" "}
+                {(
+                  parseFloat(a.supervisor_distance_km) +
+                  a.member_assignments.reduce(
+                    (sum, ma) => sum + parseFloat(ma.distance_km),
+                    0,
+                  )
+                ).toFixed(1)}{" "}
+                km
               </div>
             </div>
           ))}
