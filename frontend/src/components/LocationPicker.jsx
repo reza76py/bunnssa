@@ -92,16 +92,27 @@ function MapViewportSync({ center }) {
 }
 
 const styles = {
-  label: { fontSize: 12, color: "#666", display: "block", marginBottom: 6 },
-  mapFrame: { border: "1px solid #ddd", borderRadius: 10, overflow: "hidden" },
+  label: {
+    fontSize: 12,
+    color: "#a0a0b8",
+    display: "block",
+    marginBottom: 6,
+    textTransform: "uppercase",
+    letterSpacing: "0.08em",
+  },
+  mapFrame: {
+    border: "1px solid #1e1e3a",
+    borderRadius: 10,
+    overflow: "hidden",
+  },
   map: { height: 300, width: "100%" },
   coordsBox: {
     marginTop: 8,
     padding: "10px 12px",
     fontSize: 12,
-    color: "#555",
-    background: "#f5f5f3",
-    border: "1px solid #e5e5e2",
+    color: "#a0a0b8",
+    background: "#0a0a1a",
+    border: "1px solid #1e1e3a",
     borderRadius: 8,
   },
 };

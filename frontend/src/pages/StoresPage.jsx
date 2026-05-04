@@ -173,7 +173,7 @@ export default function StoresPage() {
                       Edit
                     </button>
                     <button
-                      style={{ ...s.btnSm, color: "#c0392b" }}
+                      style={{ ...s.btnSm, color: "#ef5350" }}
                       onClick={() => del(st.id)}
                     >
                       Remove
@@ -195,9 +195,11 @@ function Field({ label, value, onChange, type = "text", span }) {
       <label
         style={{
           fontSize: 12,
-          color: "#666",
+          color: "#a0a0b8",
           display: "block",
           marginBottom: 4,
+          textTransform: "uppercase",
+          letterSpacing: "0.08em",
         }}
       >
         {label}
@@ -207,9 +209,12 @@ function Field({ label, value, onChange, type = "text", span }) {
           width: "100%",
           padding: "7px 10px",
           fontSize: 13,
-          border: "1px solid #ddd",
+          background: "#0a0a1a",
+          border: "1px solid #1e1e3a",
           borderRadius: 6,
           boxSizing: "border-box",
+          color: "#ffffff",
+          outline: "none",
         }}
         type={type}
         value={value}

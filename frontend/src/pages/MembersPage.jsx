@@ -169,7 +169,7 @@ export default function MembersPage() {
                       Edit
                     </button>
                     <button
-                      style={{ ...s.btnSm, color: "#c0392b" }}
+                      style={{ ...s.btnSm, color: "#ef5350" }}
                       onClick={() => del(item.id)}
                     >
                       Remove

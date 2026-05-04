@@ -27,19 +27,19 @@ L.Icon.Default.mergeOptions({
 
 const storeIcon = L.divIcon({
   className: "",
-  html: '<div style="width:14px;height:14px;background:#d32f2f;border:2px solid #fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.3)"></div>',
+  html: '<div style="width:14px;height:14px;background:#6c63ff;border:2px solid #fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.3)"></div>',
   iconAnchor: [7, 7],
 });
 
 const supIcon = L.divIcon({
   className: "",
-  html: '<div style="width:14px;height:14px;background:#1565c0;border:2px solid #fff;border-radius:3px;box-shadow:0 1px 4px rgba(0,0,0,.3)"></div>',
+  html: '<div style="width:14px;height:14px;background:#4fc3f7;border:2px solid #fff;border-radius:3px;box-shadow:0 1px 4px rgba(0,0,0,.3)"></div>',
   iconAnchor: [7, 7],
 });
 
 const memberIcon = L.divIcon({
   className: "",
-  html: '<div style="width:10px;height:10px;background:#2e7d32;border:2px solid #fff;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.3)"></div>',
+  html: '<div style="width:10px;height:10px;background:#66bb6a;border:2px solid #fff;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.3)"></div>',
   iconAnchor: [5, 5],
 });
 
@@ -258,7 +258,7 @@ export default function AllocationPage() {
               height: "clamp(260px, 45vh, 380px)",
               borderRadius: 10,
               marginBottom: "1.5rem",
-              border: "1px solid #e5e5e2",
+              border: "1px solid #1e1e3a",
             }}
           >
             <TileLayer
@@ -297,7 +297,7 @@ export default function AllocationPage() {
                   </Marker>
                   <Polyline
                     positions={supRoute}
-                    color="#1565c0"
+                    color="#4fc3f7"
                     weight={2}
                     dashArray="8 5"
                     opacity={0.75}
@@ -322,7 +322,7 @@ export default function AllocationPage() {
                         </Marker>
                         <Polyline
                           positions={memRoute}
-                          color="#2e7d32"
+                          color="#66bb6a"
                           weight={1.5}
                           dashArray="5 4"
                           opacity={0.6}
@@ -342,12 +342,12 @@ export default function AllocationPage() {
               gap: 16,
               marginBottom: "1rem",
               fontSize: 12,
-              color: "#666",
+              color: "#a0a0b8",
             }}
           >
-            <LegendItem color="#d32f2f" label="Selected store" shape="circle" />
-            <LegendItem color="#1565c0" label="Supervisor" shape="square" />
-            <LegendItem color="#2e7d32" label="Team member" shape="circle" />
+            <LegendItem color="#6c63ff" label="Selected store" shape="circle" />
+            <LegendItem color="#4fc3f7" label="Supervisor" shape="square" />
+            <LegendItem color="#66bb6a" label="Team member" shape="circle" />
           </div>
 
           {selected.assignments.map((a) => (
@@ -368,8 +368,8 @@ export default function AllocationPage() {
                 <span
                   style={{
                     fontSize: 12,
-                    background: "#fff3e0",
-                    color: "#bf360c",
+                    background: "#1e1e3a",
+                    color: "#4fc3f7",
                     padding: "3px 10px",
                     borderRadius: 6,
                   }}
@@ -378,16 +378,16 @@ export default function AllocationPage() {
                 </span>
               </div>
               <div style={s.resultRow}>
-                <span style={{ color: "#888" }}>Supervisor</span>
+                <span style={{ color: "#a0a0b8" }}>Supervisor</span>
                 <span>
                   {a.supervisor.name}{" "}
-                  <span style={{ color: "#888" }}>
+                  <span style={{ color: "#a0a0b8" }}>
                     ({a.supervisor_distance_km} km)
                   </span>
                 </span>
               </div>
               <div style={s.resultRow}>
-                <span style={{ color: "#888" }}>Members</span>
+                <span style={{ color: "#a0a0b8" }}>Members</span>
                 <div
                   style={{
                     display: "flex",
@@ -402,17 +402,20 @@ export default function AllocationPage() {
                       style={{
                         fontSize: 12,
                         padding: "2px 8px",
-                        background: "#f5f5f3",
-                        border: "1px solid #e5e5e2",
+                        background: "#0a0a1a",
+                        border: "1px solid #1e1e3a",
                         borderRadius: 6,
+                        color: "#ffffff",
                       }}
                     >
                       {ma.member.name}{" "}
-                      <span style={{ color: "#888" }}>{ma.distance_km}km</span>
+                      <span style={{ color: "#a0a0b8" }}>
+                        {ma.distance_km}km
+                      </span>
                     </span>
                   ))}
                   {a.member_assignments.length === 0 && (
-                    <span style={{ color: "#aaa", fontSize: 12 }}>
+                    <span style={{ color: "#a0a0b8", fontSize: 12 }}>
                       None assigned
                     </span>
                   )}
@@ -435,10 +438,19 @@ export default function AllocationPage() {
 function StatCard({ label, value }) {
   return (
     <div
-      style={{ background: "#f5f5f3", borderRadius: 8, padding: "12px 16px" }}
+      style={{
+        background: "#12122a",
+        border: "1px solid #1e1e3a",
+        borderRadius: 10,
+        padding: "12px 16px",
+      }}
     >
-      <div style={{ fontSize: 22, fontWeight: 600 }}>{value}</div>
-      <div style={{ fontSize: 12, color: "#888", marginTop: 2 }}>{label}</div>
+      <div style={{ fontSize: 22, fontWeight: 600, color: "#ffffff" }}>
+        {value}
+      </div>
+      <div style={{ fontSize: 12, color: "#a0a0b8", marginTop: 2 }}>
+        {label}
+      </div>
     </div>
   );
 }

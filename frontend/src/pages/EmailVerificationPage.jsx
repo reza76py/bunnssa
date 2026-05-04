@@ -34,7 +34,7 @@ export default function EmailVerificationPage() {
       <div style={styles.card}>
         <h1 style={styles.title}>Email Verification</h1>
         <p
-          style={{ ...styles.message, color: success ? "#2e7d32" : "#c0392b" }}
+          style={{ ...styles.message, color: success ? "#66bb6a" : "#ef5350" }}
         >
           {message}
         </p>
@@ -59,18 +59,24 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    background: "#f5f5f3",
+    background: "#0a0a1a",
   },
   card: {
     width: 420,
-    background: "#fff",
-    border: "1px solid #e5e5e2",
-    borderRadius: 12,
+    background: "#12122a",
+    border: "1px solid #1e1e3a",
+    borderRadius: 16,
     padding: "2rem",
     textAlign: "center",
+    boxShadow: "0 4px 24px rgba(0,0,0,0.4)",
   },
-  title: { margin: "0 0 1rem", fontSize: 24, color: "#1a1a18" },
+  title: {
+    margin: "0 0 1rem",
+    fontSize: 24,
+    color: "#ffffff",
+    fontWeight: 700,
+  },
   message: { fontSize: 15, fontWeight: 600, marginBottom: 10 },
-  meta: { fontSize: 13, color: "#666" },
-  link: { color: "#d32f2f", textDecoration: "none", fontWeight: 600 },
+  meta: { fontSize: 13, color: "#a0a0b8" },
+  link: { color: "#6c63ff", textDecoration: "none", fontWeight: 600 },
 };

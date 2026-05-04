@@ -113,7 +113,7 @@ export default function SettingsPage() {
 
         {error && <p style={{ ...s.error, marginTop: 8 }}>{error}</p>}
         {success && (
-          <p style={{ color: "#2e7d32", fontSize: 13, marginTop: 8 }}>
+          <p style={{ color: "#66bb6a", fontSize: 13, marginTop: 8 }}>
             {success}
           </p>
         )}

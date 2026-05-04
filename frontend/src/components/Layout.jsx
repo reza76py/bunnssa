@@ -36,7 +36,7 @@ export default function Layout() {
       <aside
         style={{
           ...styles.sidebar,
-          width: isMobile ? "100%" : 220,
+          width: isMobile ? "100%" : 240,
           padding: isMobile ? "1rem 0" : "1.5rem 0",
         }}
       >
@@ -65,10 +65,16 @@ export default function Layout() {
                   ? {
                       display: "inline-flex",
                       borderRadius: 999,
-                      border: "1px solid #333",
+                      border: isActive
+                        ? "1px solid #6c63ff"
+                        : "1px solid #1e1e3a",
                       padding: "8px 12px",
                     }
-                  : {}),
+                  : {
+                      borderLeft: isActive
+                        ? "3px solid #6c63ff"
+                        : "3px solid transparent",
+                    }),
                 ...(isActive ? styles.navActive : {}),
               })}
             >
@@ -95,37 +101,38 @@ export default function Layout() {
 }
 
 const styles = {
-  shell: { display: "flex", minHeight: "100vh", background: "#f5f5f3" },
+  shell: { display: "flex", minHeight: "100vh", background: "#0a0a1a" },
   sidebar: {
-    background: "#1a1a18",
+    background: "#0d0d1f",
     display: "flex",
     flexDirection: "column",
     flexShrink: 0,
+    borderRight: "1px solid #1e1e3a",
   },
-  brand: { padding: "0 1.25rem 1.5rem", borderBottom: "1px solid #333" },
+  brand: { padding: "0 1.25rem 1.5rem", borderBottom: "1px solid #1e1e3a" },
   brandName: { display: "block", color: "#fff", fontWeight: 700, fontSize: 16 },
-  brandSub: { display: "block", color: "#888", fontSize: 12, marginTop: 2 },
+  brandSub: { display: "block", color: "#a0a0b8", fontSize: 12, marginTop: 2 },
   nav: { flex: 1, padding: "1rem 0" },
   navItem: {
     display: "flex",
     alignItems: "center",
     gap: 8,
     padding: "9px 1.25rem",
-    color: "#aaa",
+    color: "#a0a0b8",
     textDecoration: "none",
     fontSize: 14,
-    transition: "background .15s",
+    transition: "background .15s, color .15s",
   },
-  navActive: { color: "#fff", background: "#2c2c2a" },
+  navActive: { color: "#6c63ff", background: "#1e1e3a" },
   icon: { fontSize: 14, width: 18 },
   logout: {
     padding: "7px",
     fontSize: 13,
-    color: "#888",
+    color: "#a0a0b8",
     background: "transparent",
-    border: "1px solid #333",
+    border: "1px solid #1e1e3a",
     borderRadius: 6,
     cursor: "pointer",
   },
-  main: { flex: 1, overflowY: "auto", minWidth: 0 },
+  main: { flex: 1, overflowY: "auto", minWidth: 0, background: "#0a0a1a" },
 };

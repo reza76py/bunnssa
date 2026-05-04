@@ -39,7 +39,7 @@ export default function ProfilePage() {
         )}
       </div>
       <div style={s.resultCard}>
-        <p style={{ margin: 0, color: "#555", fontSize: 13 }}>
+        <p style={{ margin: 0, color: "#a0a0b8", fontSize: 13 }}>
           Super admins can create and manage all user accounts from the Django
           admin panel.
         </p>
@@ -56,11 +56,11 @@ function ProfileRow({ label, value }) {
         justifyContent: "space-between",
         gap: 16,
         paddingBottom: 10,
-        borderBottom: "1px solid #f0f0ee",
+        borderBottom: "1px solid #1e1e3a",
       }}
     >
-      <span style={{ color: "#777", fontSize: 13 }}>{label}</span>
-      <span style={{ color: "#1a1a18", fontWeight: 600 }}>{value}</span>
+      <span style={{ color: "#a0a0b8", fontSize: 13 }}>{label}</span>
+      <span style={{ color: "#ffffff", fontWeight: 600 }}>{value}</span>
     </div>
   );
 }
