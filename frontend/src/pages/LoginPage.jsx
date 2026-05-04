@@ -30,7 +30,24 @@ export default function LoginPage() {
 
   return (
     <div style={styles.page}>
-      <div style={styles.card}>
+      <div style={styles.contentWrap}>
+        <div style={styles.infoBlock}>
+          <div style={styles.infoTitle}>What is Staff Allocation System?</div>
+          <p style={styles.infoBody}>
+            Staff Allocation System automatically assigns supervisors and team
+            members to your stores based on road distance and weekly delivery
+            value. The engine selects the closest available supervisor and
+            distributes members proportionally - saving hours of manual
+            planning every week.
+          </p>
+          <div style={styles.featurePills}>
+            <span style={styles.pill}>📍 Distance-based routing</span>
+            <span style={styles.pill}>⚖️ Workload balancing</span>
+            <span style={styles.pill}>📧 Auto email reports</span>
+          </div>
+        </div>
+
+        <div style={styles.card}>
         <div style={styles.logo}>
           <a
             href="https://rezteche.com"
@@ -90,6 +107,7 @@ export default function LoginPage() {
           </p>
         </form>
       </div>
+      </div>
     </div>
   );
 }
@@ -102,6 +120,42 @@ const styles = {
     justifyContent: "center",
     background: "#0a0a1a",
     padding: "1rem",
+  },
+  contentWrap: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  infoBlock: {
+    maxWidth: 480,
+    marginBottom: 24,
+    color: "#a0a0b8",
+    textAlign: "center",
+  },
+  infoTitle: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: 600,
+    marginBottom: 8,
+  },
+  infoBody: {
+    margin: 0,
+    lineHeight: 1.5,
+  },
+  featurePills: {
+    display: "flex",
+    justifyContent: "center",
+    gap: 8,
+    marginTop: 12,
+    flexWrap: "wrap",
+  },
+  pill: {
+    background: "#1e1e3a",
+    color: "#a0a0b8",
+    borderRadius: 20,
+    padding: "4px 12px",
+    fontSize: 12,
   },
   card: {
     background: "#12122a",
