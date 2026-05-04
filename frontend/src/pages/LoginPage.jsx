@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { authApi } from "../api";
-import rezTecheLogo from "../assets/rezteche-logo.png";
+import logo from "../assets/rezteche-logo.png";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -51,7 +51,8 @@ export default function LoginPage() {
           <div style={styles.infoTitleBenefits}>Benefits</div>
           <ol style={styles.infoList}>
             <li>
-              1. Optimised use of available members - no over or under allocation.
+              1. Optimised use of available members - no over or under
+              allocation.
             </li>
             <li>2. Less travel - closest people always assigned first.</li>
             <li>3. Saves hours of manual planning every week.</li>
@@ -66,10 +67,9 @@ export default function LoginPage() {
               rel="noreferrer"
               style={styles.logoLink}
             >
-              <img src={rezTecheLogo} alt="RezTeche" style={styles.logoImg} />
+              <img src={logo} alt="RezTeche" style={styles.logoImg} />
             </a>
             <span style={styles.logoText}>Staff Allocation System</span>
-            
           </div>
           <form onSubmit={handleLogin}>
             <div style={styles.field}>
@@ -161,8 +161,13 @@ const styles = {
     boxShadow: "0 4px 24px rgba(0,0,0,0.4)",
   },
   logo: { textAlign: "center", marginBottom: "1.5rem" },
-  logoLink: { display: "inline-block", marginBottom: ".75rem" },
-  logoImg: { height: 54, width: "auto", objectFit: "contain" },
+  logoLink: { display: "inline-block" },
+  logoImg: {
+    height: 40,
+    width: "auto",
+    objectFit: "contain",
+    marginBottom: 12,
+  },
   logoText: {
     display: "block",
     fontSize: 22,
