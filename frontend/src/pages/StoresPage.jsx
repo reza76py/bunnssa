@@ -8,6 +8,7 @@ const empty = {
   latitude: "",
   longitude: "",
   weekly_delivery_value: "",
+  address: "",
 };
 
 export default function StoresPage() {
@@ -16,7 +17,6 @@ export default function StoresPage() {
   const [editing, setEditing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
   useEffect(() => {
     load();
   }, []);
@@ -114,9 +114,11 @@ export default function StoresPage() {
             <LocationPicker
               latitude={form.latitude}
               longitude={form.longitude}
+              address={form.address}
               onChange={({ latitude, longitude }) =>
-                setForm({ ...form, latitude, longitude })
+                setForm((f) => ({ ...f, latitude, longitude }))
               }
+              onAddressChange={(val) => setForm((f) => ({ ...f, address: val }))}
             />
           </div>
           <Field
@@ -152,7 +154,7 @@ export default function StoresPage() {
           <table style={s.table}>
             <thead>
               <tr>
-                {["Store name", "Lat", "Lng", "Weekly value", ""].map((h) => (
+                {["Store name", "Weekly value", ""].map((h) => (
                   <th key={h} style={s.th}>
                     {h}
                   </th>
@@ -163,8 +165,6 @@ export default function StoresPage() {
               {stores.map((st) => (
                 <tr key={st.id} style={s.tr}>
                   <td style={s.td}>{st.name}</td>
-                  <td style={s.td}>{parseFloat(st.latitude).toFixed(4)}</td>
-                  <td style={s.td}>{parseFloat(st.longitude).toFixed(4)}</td>
                   <td style={s.td}>
                     ${Number(st.weekly_delivery_value).toLocaleString()}
                   </td>

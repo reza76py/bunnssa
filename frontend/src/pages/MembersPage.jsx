@@ -3,7 +3,7 @@ import { membersApi } from "../api";
 import LocationPicker from "../components/LocationPicker";
 import { s } from "../styles/common";
 
-const empty = { name: "", email: "", latitude: "", longitude: "" };
+const empty = { name: "", email: "", latitude: "", longitude: "", address: "" };
 
 export default function MembersPage() {
   const [items, setItems] = useState([]);
@@ -11,7 +11,6 @@ export default function MembersPage() {
   const [editing, setEditing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
   useEffect(() => {
     load();
   }, []);
@@ -117,9 +116,11 @@ export default function MembersPage() {
             <LocationPicker
               latitude={form.latitude}
               longitude={form.longitude}
+              address={form.address}
               onChange={({ latitude, longitude }) =>
-                setForm({ ...form, latitude, longitude })
+                setForm((f) => ({ ...f, latitude, longitude }))
               }
+              onAddressChange={(val) => setForm((f) => ({ ...f, address: val }))}
             />
           </div>
         </div>
@@ -148,7 +149,7 @@ export default function MembersPage() {
           <table style={s.table}>
             <thead>
               <tr>
-                {["Name", "Email", "Latitude", "Longitude", ""].map((h) => (
+                {["Name", "Email", ""].map((h) => (
                   <th key={h} style={s.th}>
                     {h}
                   </th>
@@ -162,8 +163,6 @@ export default function MembersPage() {
                   <td style={s.td}>
                     {item.email || <span style={s.muted}>—</span>}
                   </td>
-                  <td style={s.td}>{parseFloat(item.latitude).toFixed(4)}</td>
-                  <td style={s.td}>{parseFloat(item.longitude).toFixed(4)}</td>
                   <td style={s.td}>
                     <button style={s.btnSm} onClick={() => edit(item)}>
                       Edit
