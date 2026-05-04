@@ -60,15 +60,16 @@ export default function LoginPage() {
         </div>
 
         <div style={styles.card}>
-          <div style={styles.logo}>
-            <a
-              href="https://rezteche.com"
-              target="_blank"
-              rel="noreferrer"
-              style={styles.logoLink}
-            >
-              <img src={logo} alt="RezTeche" style={styles.logoImg} />
+          <div style={{ textAlign: "center", marginBottom: "16px" }}>
+            <a href="https://rezteche.com" target="_blank" rel="noreferrer">
+              <img
+                src={logo}
+                alt="RezTeche"
+                style={{ height: "40px", width: "auto", margin: "0 auto" }}
+              />
             </a>
+          </div>
+          <div style={styles.logo}>
             <span style={styles.logoText}>Staff Allocation System</span>
           </div>
           <form onSubmit={handleLogin}>
