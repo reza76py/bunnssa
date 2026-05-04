@@ -31,19 +31,19 @@ export default function LoginPage() {
   return (
     <div style={styles.page}>
       <div style={styles.contentWrap}>
-        <div style={styles.infoBlock}>
+        <div>
           <div style={styles.infoTitle}>How It Works</div>
           <ol style={styles.infoList}>
             <li>
-              The highest-value stores are selected based on supervisor
+              1. The highest-value stores are selected based on supervisor
               availability.
             </li>
             <li>
-              The closest supervisors are assigned to each selected store by
+              2. The closest supervisors are assigned to each selected store by
               road distance.
             </li>
             <li>
-              Members are distributed proportionally across stores based on
+              3. Members are distributed proportionally across stores based on
               delivery value and availability.
             </li>
           </ol>
@@ -51,73 +51,73 @@ export default function LoginPage() {
           <div style={styles.infoTitleBenefits}>Benefits</div>
           <ol style={styles.infoList}>
             <li>
-              Optimised use of available members - no over or under allocation.
+              1. Optimised use of available members - no over or under allocation.
             </li>
-            <li>Less travel - closest people always assigned first.</li>
-            <li>Saves hours of manual planning every week.</li>
+            <li>2. Less travel - closest people always assigned first.</li>
+            <li>3. Saves hours of manual planning every week.</li>
           </ol>
         </div>
 
         <div style={styles.card}>
-        <div style={styles.logo}>
-          <a
-            href="https://rezteche.com"
-            target="_blank"
-            rel="noreferrer"
-            style={styles.logoLink}
-          >
-            <img src={rezTecheLogo} alt="RezTeche" style={styles.logoImg} />
-          </a>
-          <span style={styles.logoText}>Staff Allocation System</span>
-          <span style={styles.logoSub}>
-            Powered by{" "}
+          <div style={styles.logo}>
             <a
               href="https://rezteche.com"
               target="_blank"
               rel="noreferrer"
-              style={styles.poweredLink}
+              style={styles.logoLink}
             >
-              RezTeche
+              <img src={rezTecheLogo} alt="RezTeche" style={styles.logoImg} />
             </a>
-          </span>
-          <span style={styles.logoHint}>
-            If you have an account, please sign in. Otherwise, register for a
-            new account.
-          </span>
+            <span style={styles.logoText}>Staff Allocation System</span>
+            <span style={styles.logoSub}>
+              Powered by{" "}
+              <a
+                href="https://rezteche.com"
+                target="_blank"
+                rel="noreferrer"
+                style={styles.poweredLink}
+              >
+                RezTeche
+              </a>
+            </span>
+            <span style={styles.logoHint}>
+              If you have an account, please sign in. Otherwise, register for a
+              new account.
+            </span>
+          </div>
+          <form onSubmit={handleLogin}>
+            <div style={styles.field}>
+              <label style={styles.label}>Username</label>
+              <input
+                style={styles.input}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                autoFocus
+              />
+            </div>
+            <div style={styles.field}>
+              <label style={styles.label}>Password</label>
+              <input
+                style={styles.input}
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            {error && <p style={styles.error}>{error}</p>}
+            <button style={styles.btn} type="submit" disabled={loading}>
+              {loading ? "Signing in…" : "Sign in"}
+            </button>
+            <p style={styles.meta}>
+              Need an account?{" "}
+              <Link to="/register" style={styles.link}>
+                Register
+              </Link>
+            </p>
+          </form>
         </div>
-        <form onSubmit={handleLogin}>
-          <div style={styles.field}>
-            <label style={styles.label}>Username</label>
-            <input
-              style={styles.input}
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              autoFocus
-            />
-          </div>
-          <div style={styles.field}>
-            <label style={styles.label}>Password</label>
-            <input
-              style={styles.input}
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          {error && <p style={styles.error}>{error}</p>}
-          <button style={styles.btn} type="submit" disabled={loading}>
-            {loading ? "Signing in…" : "Sign in"}
-          </button>
-          <p style={styles.meta}>
-            Need an account?{" "}
-            <Link to="/register" style={styles.link}>
-              Register
-            </Link>
-          </p>
-        </form>
-      </div>
       </div>
     </div>
   );
