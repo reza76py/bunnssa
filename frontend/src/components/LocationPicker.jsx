@@ -59,7 +59,7 @@ export default function LocationPicker({
     try {
       const res = await fetch(
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`,
-        { headers: NOMINATIM_HEADERS }
+        { headers: NOMINATIM_HEADERS },
       );
       const data = await res.json();
       if (data && data.display_name) {
@@ -90,7 +90,7 @@ export default function LocationPicker({
     try {
       const res = await fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`,
-        { headers: NOMINATIM_HEADERS }
+        { headers: NOMINATIM_HEADERS },
       );
       const results = await res.json();
       if (results && results.length > 0) {

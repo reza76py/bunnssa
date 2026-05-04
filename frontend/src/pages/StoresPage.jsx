@@ -118,7 +118,9 @@ export default function StoresPage() {
               onChange={({ latitude, longitude }) =>
                 setForm((f) => ({ ...f, latitude, longitude }))
               }
-              onAddressChange={(val) => setForm((f) => ({ ...f, address: val }))}
+              onAddressChange={(val) =>
+                setForm((f) => ({ ...f, address: val }))
+              }
             />
           </div>
           <Field
