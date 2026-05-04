@@ -32,19 +32,30 @@ export default function LoginPage() {
     <div style={styles.page}>
       <div style={styles.contentWrap}>
         <div style={styles.infoBlock}>
-          <div style={styles.infoTitle}>What is Staff Allocation System?</div>
-          <p style={styles.infoBody}>
-            Staff Allocation System automatically assigns supervisors and team
-            members to your stores based on road distance and weekly delivery
-            value. The engine selects the closest available supervisor and
-            distributes members proportionally - saving hours of manual
-            planning every week.
-          </p>
-          <div style={styles.featurePills}>
-            <span style={styles.pill}>📍 Distance-based routing</span>
-            <span style={styles.pill}>⚖️ Workload balancing</span>
-            <span style={styles.pill}>📧 Auto email reports</span>
-          </div>
+          <div style={styles.infoTitle}>How It Works</div>
+          <ol style={styles.infoList}>
+            <li>
+              The highest-value stores are selected based on supervisor
+              availability.
+            </li>
+            <li>
+              The closest supervisors are assigned to each selected store by
+              road distance.
+            </li>
+            <li>
+              Members are distributed proportionally across stores based on
+              delivery value and availability.
+            </li>
+          </ol>
+
+          <div style={styles.infoTitleBenefits}>Benefits</div>
+          <ol style={styles.infoList}>
+            <li>
+              Optimised use of available members - no over or under allocation.
+            </li>
+            <li>Less travel - closest people always assigned first.</li>
+            <li>Saves hours of manual planning every week.</li>
+          </ol>
         </div>
 
         <div style={styles.card}>
@@ -128,34 +139,32 @@ const styles = {
     alignItems: "center",
   },
   infoBlock: {
+    background: "#12122a",
+    border: "1px solid #1e1e3a",
+    borderRadius: 12,
+    padding: 20,
     maxWidth: 480,
     marginBottom: 24,
-    color: "#a0a0b8",
-    textAlign: "center",
   },
   infoTitle: {
     color: "#ffffff",
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: 600,
-    marginBottom: 8,
+    marginBottom: 10,
   },
-  infoBody: {
+  infoTitleBenefits: {
+    color: "#ffffff",
+    fontSize: 15,
+    fontWeight: 600,
+    marginTop: 16,
+    marginBottom: 10,
+  },
+  infoList: {
     margin: 0,
-    lineHeight: 1.5,
-  },
-  featurePills: {
-    display: "flex",
-    justifyContent: "center",
-    gap: 8,
-    marginTop: 12,
-    flexWrap: "wrap",
-  },
-  pill: {
-    background: "#1e1e3a",
+    paddingLeft: 20,
+    fontSize: 13,
+    lineHeight: 1.7,
     color: "#a0a0b8",
-    borderRadius: 20,
-    padding: "4px 12px",
-    fontSize: 12,
   },
   card: {
     background: "#12122a",
