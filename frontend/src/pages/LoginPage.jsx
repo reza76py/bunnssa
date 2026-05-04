@@ -69,21 +69,7 @@ export default function LoginPage() {
               <img src={rezTecheLogo} alt="RezTeche" style={styles.logoImg} />
             </a>
             <span style={styles.logoText}>Staff Allocation System</span>
-            <span style={styles.logoSub}>
-              Powered by{" "}
-              <a
-                href="https://rezteche.com"
-                target="_blank"
-                rel="noreferrer"
-                style={styles.poweredLink}
-              >
-                RezTeche
-              </a>
-            </span>
-            <span style={styles.logoHint}>
-              If you have an account, please sign in. Otherwise, register for a
-              new account.
-            </span>
+            
           </div>
           <form onSubmit={handleLogin}>
             <div style={styles.field}>
