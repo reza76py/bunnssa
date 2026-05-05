@@ -3,8 +3,6 @@ import { authApi } from "../api";
 import { s } from "../styles/common";
 
 const empty = {
-  first_name: "",
-  last_name: "",
   email: "",
 };
 
@@ -25,8 +23,6 @@ export default function SettingsPage() {
     try {
       const { data } = await authApi.profile();
       setForm({
-        first_name: data.first_name || "",
-        last_name: data.last_name || "",
         email: data.email || "",
       });
     } catch {
@@ -42,8 +38,6 @@ export default function SettingsPage() {
     setSuccess("");
     try {
       await authApi.updateProfile({
-        first_name: form.first_name.trim(),
-        last_name: form.last_name.trim(),
         email: form.email.trim(),
       });
       setSuccess("Profile settings saved.");
@@ -83,22 +77,7 @@ export default function SettingsPage() {
       <div style={s.formCard}>
         <h3 style={s.h3}>Profile Settings</h3>
         <div style={s.grid2}>
-          <div>
-            <label style={s.fieldLabel}>First Name</label>
-            <input
-              style={s.input}
-              value={form.first_name}
-              onChange={(e) => setForm({ ...form, first_name: e.target.value })}
-            />
-          </div>
-          <div>
-            <label style={s.fieldLabel}>Last Name</label>
-            <input
-              style={s.input}
-              value={form.last_name}
-              onChange={(e) => setForm({ ...form, last_name: e.target.value })}
-            />
-          </div>
+
           <div style={{ gridColumn: "span 2" }}>
             <label style={s.fieldLabel}>Email</label>
             <input

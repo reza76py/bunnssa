@@ -30,20 +30,28 @@ export default function LoginPage() {
 
   return (
     <div style={styles.page}>
+      <a
+        href="https://rezteche.com"
+        target="_blank"
+        rel="noreferrer"
+        style={styles.cornerLogo}
+      >
+        <img src={rezTecheLogo} alt="RezTeche" style={styles.cornerLogoImg} />
+      </a>
       <div style={styles.contentWrap}>
-        <div style={styles.infoBlock}>
+        <div>
           <div style={styles.infoTitle}>How It Works</div>
           <ol style={styles.infoList}>
             <li>
-              The highest-value stores are selected based on supervisor
+              1. The highest-value stores are selected based on supervisor
               availability.
             </li>
             <li>
-              The closest supervisors are assigned to each selected store by
+              2. The closest supervisors are assigned to each selected store by
               road distance.
             </li>
             <li>
-              Members are distributed proportionally across stores based on
+              3. Members are distributed proportionally across stores based on
               delivery value and availability.
             </li>
           </ol>
@@ -51,73 +59,56 @@ export default function LoginPage() {
           <div style={styles.infoTitleBenefits}>Benefits</div>
           <ol style={styles.infoList}>
             <li>
-              Optimised use of available members - no over or under allocation.
+              1. Optimised use of available members - no over or under
+              allocation.
             </li>
-            <li>Less travel - closest people always assigned first.</li>
-            <li>Saves hours of manual planning every week.</li>
+            <li>2. Less travel - closest people always assigned first.</li>
+            <li>3. Saves hours of manual planning every week.</li>
           </ol>
         </div>
 
         <div style={styles.card}>
-        <div style={styles.logo}>
-          <a
-            href="https://rezteche.com"
-            target="_blank"
-            rel="noreferrer"
-            style={styles.logoLink}
-          >
-            <img src={rezTecheLogo} alt="RezTeche" style={styles.logoImg} />
-          </a>
-          <span style={styles.logoText}>Staff Allocation System</span>
-          <span style={styles.logoSub}>
-            Powered by{" "}
-            <a
-              href="https://rezteche.com"
-              target="_blank"
-              rel="noreferrer"
-              style={styles.poweredLink}
-            >
-              RezTeche
-            </a>
-          </span>
-          <span style={styles.logoHint}>
-            If you have an account, please sign in. Otherwise, register for a
-            new account.
-          </span>
+          <div style={styles.logo}>
+            <span style={styles.logoText}>Staff Allocation System</span>
+          </div>
+          <form onSubmit={handleLogin}>
+            <div style={styles.field}>
+              <label style={styles.label}>Username</label>
+              <input
+                style={styles.input}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                autoFocus
+              />
+            </div>
+            <div style={styles.field}>
+              <label style={styles.label}>Password</label>
+              <input
+                style={styles.input}
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            {error && <p style={styles.error}>{error}</p>}
+            <button style={styles.btn} type="submit" disabled={loading}>
+              {loading ? "Signing in…" : "Sign in"}
+            </button>
+            <p style={styles.meta}>
+              <Link to="/forgot-password" style={styles.link}>
+                Forgot password?
+              </Link>
+            </p>
+            <p style={styles.meta}>
+              Need an account?{" "}
+              <Link to="/register" style={styles.link}>
+                Register
+              </Link>
+            </p>
+          </form>
         </div>
-        <form onSubmit={handleLogin}>
-          <div style={styles.field}>
-            <label style={styles.label}>Username</label>
-            <input
-              style={styles.input}
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              autoFocus
-            />
-          </div>
-          <div style={styles.field}>
-            <label style={styles.label}>Password</label>
-            <input
-              style={styles.input}
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          {error && <p style={styles.error}>{error}</p>}
-          <button style={styles.btn} type="submit" disabled={loading}>
-            {loading ? "Signing in…" : "Sign in"}
-          </button>
-          <p style={styles.meta}>
-            Need an account?{" "}
-            <Link to="/register" style={styles.link}>
-              Register
-            </Link>
-          </p>
-        </form>
-      </div>
       </div>
     </div>
   );
@@ -127,7 +118,8 @@ const styles = {
   page: {
     minHeight: "100vh",
     display: "flex",
-    alignItems: "center",
+    alignItems: "flex-start",
+    paddingTop: "150px",
     justifyContent: "center",
     background: "#0a0a1a",
     padding: "1rem",
@@ -137,6 +129,7 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+    gap: "32px",
   },
   infoBlock: {
     background: "#12122a",
@@ -220,4 +213,18 @@ const styles = {
   },
   meta: { marginTop: 12, fontSize: 13, color: "#a0a0b8", textAlign: "center" },
   link: { color: "#6c63ff", textDecoration: "none", fontWeight: 600 },
+  cornerLogo: {
+    position: "absolute",
+    top: 22,
+    left: 24,
+    display: "inline-block",
+    zIndex: 10,
+  },
+
+  cornerLogoImg: {
+    paddingTop: "5px",
+    height: 110,
+    width: "auto",
+    objectFit: "contain",
+  },
 };

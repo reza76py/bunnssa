@@ -39,8 +39,24 @@ api.interceptors.response.use(
 
 export const storesApi = {
   list: () => api.get("/stores/"),
-  create: (data) => api.post("/stores/", data),
-  update: (id, data) => api.put(`/stores/${id}/`, data),
+  create: (data) =>
+    api.post("/stores/", {
+      name: data.name,
+      latitude: data.latitude,
+      longitude: data.longitude,
+      weekly_delivery_value: data.weekly_delivery_value,
+      start_date: data.start_date,
+      end_date: data.end_date,
+    }),
+  update: (id, data) =>
+    api.put(`/stores/${id}/`, {
+      name: data.name,
+      latitude: data.latitude,
+      longitude: data.longitude,
+      weekly_delivery_value: data.weekly_delivery_value,
+      start_date: data.start_date,
+      end_date: data.end_date,
+    }),
   remove: (id) => api.delete(`/stores/${id}/`),
 };
 
@@ -77,6 +93,14 @@ export const authApi = {
   verifyEmail: (uid, token) => api.get(`/auth/verify-email/${uid}/${token}/`),
   profile: () => api.get("/auth/profile/"),
   updateProfile: (data) => api.put("/auth/profile/", data),
+  requestPasswordReset: (email) => api.post("/auth/password-reset/", { email }),
+  confirmPasswordReset: (uid, token, new_password, confirm_password) =>
+    api.post("/auth/password-reset-confirm/", {
+      uid,
+      token,
+      new_password,
+      confirm_password,
+    }),
 };
 
 export default api;

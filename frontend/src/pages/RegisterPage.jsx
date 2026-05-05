@@ -7,11 +7,10 @@ export default function RegisterPage() {
   const [form, setForm] = useState({
     username: "",
     email: "",
-    first_name: "",
-    last_name: "",
     password: "",
   });
   const [error, setError] = useState("");
+  const [emailError, setEmailError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -19,6 +18,7 @@ export default function RegisterPage() {
     event.preventDefault();
     setLoading(true);
     setError("");
+    setEmailError("");
     setSuccess("");
     try {
       await authApi.register(form);
@@ -26,15 +26,27 @@ export default function RegisterPage() {
       setForm({
         username: "",
         email: "",
-        first_name: "",
-        last_name: "",
         password: "",
       });
     } catch (requestError) {
       const data = requestError.response?.data;
       if (typeof data === "object" && data) {
-        const firstError = Object.values(data).flat()[0];
-        setError(firstError || "Registration failed.");
+        const emailMessage = Array.isArray(data.email)
+          ? data.email[0]
+          : data.email;
+        if (emailMessage) {
+          setEmailError(emailMessage);
+        }
+
+        const firstNonEmailEntry = Object.entries(data).find(
+          ([field]) => field !== "email",
+        );
+        const firstError = firstNonEmailEntry
+          ? Array.isArray(firstNonEmailEntry[1])
+            ? firstNonEmailEntry[1][0]
+            : firstNonEmailEntry[1]
+          : "";
+        setError(firstError || (!emailMessage ? "Registration failed." : ""));
       } else {
         setError("Registration failed.");
       }
@@ -58,16 +70,7 @@ export default function RegisterPage() {
             type="email"
             value={form.email}
             onChange={(value) => setForm({ ...form, email: value })}
-          />
-          <Field
-            label="First name"
-            value={form.first_name}
-            onChange={(value) => setForm({ ...form, first_name: value })}
-          />
-          <Field
-            label="Last name"
-            value={form.last_name}
-            onChange={(value) => setForm({ ...form, last_name: value })}
+            error={emailError}
           />
           <Field
             label="Password"
@@ -92,17 +95,21 @@ export default function RegisterPage() {
   );
 }
 
-function Field({ label, value, onChange, type = "text" }) {
+function Field({ label, value, onChange, type = "text", error = "" }) {
   return (
     <div style={styles.field}>
       <label style={styles.label}>{label}</label>
       <input
-        style={styles.input}
+        style={{
+          ...styles.input,
+          ...(error ? styles.inputError : null),
+        }}
         type={type}
         value={value}
         onChange={(event) => onChange(event.target.value)}
         required={label === "Username" || label === "Password"}
       />
+      {error && <p style={styles.fieldError}>{error}</p>}
     </div>
   );
 }
@@ -150,6 +157,9 @@ const styles = {
     color: "#ffffff",
     outline: "none",
   },
+  inputError: {
+    border: "1px solid #ef5350",
+  },
   button: {
     width: "100%",
     padding: "10px",
@@ -162,6 +172,7 @@ const styles = {
     cursor: "pointer",
     marginTop: 8,
   },
+  fieldError: { color: "#ef5350", fontSize: 12, margin: "6px 0 0" },
   error: { color: "#ef5350", fontSize: 13, marginBottom: ".75rem" },
   success: { color: "#66bb6a", fontSize: 13, marginBottom: ".75rem" },
   meta: { marginTop: 14, fontSize: 13, color: "#a0a0b8", textAlign: "center" },

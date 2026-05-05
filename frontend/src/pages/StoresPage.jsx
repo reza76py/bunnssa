@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { storesApi } from "../api";
 import LocationPicker from "../components/LocationPicker";
+import ConfirmModal from "../components/ConfirmModal";
 import { s } from "../styles/common";
 
 const empty = {
@@ -8,15 +9,18 @@ const empty = {
   latitude: "",
   longitude: "",
   weekly_delivery_value: "",
-  address: "",
+  start_date: "",
+  end_date: "",
 };
 
 export default function StoresPage() {
   const [stores, setStores] = useState([]);
   const [form, setForm] = useState(empty);
+  const [address, setAddress] = useState("");
   const [editing, setEditing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [confirmItem, setConfirmItem] = useState(null);
   useEffect(() => {
     load();
   }, []);
@@ -52,6 +56,8 @@ export default function StoresPage() {
         latitude: String(form.latitude).trim(),
         longitude: String(form.longitude).trim(),
         weekly_delivery_value: String(form.weekly_delivery_value).trim(),
+        start_date: form.start_date ? String(form.start_date).trim() : null,
+        end_date: form.end_date ? String(form.end_date).trim() : null,
       };
       if (editing) {
         await storesApi.update(editing, payload);
@@ -59,6 +65,7 @@ export default function StoresPage() {
         await storesApi.create(payload);
       }
       setForm(empty);
+      setAddress("");
       setEditing(null);
       setError("");
       load();
@@ -82,9 +89,11 @@ export default function StoresPage() {
     }
   };
 
-  const del = async (id) => {
-    if (!window.confirm("Remove this store?")) return;
-    await storesApi.remove(id);
+  const del = (item) => setConfirmItem(item);
+
+  const confirmDelete = async () => {
+    await storesApi.remove(confirmItem.id);
+    setConfirmItem(null);
     load();
   };
 
@@ -95,6 +104,8 @@ export default function StoresPage() {
       latitude: store.latitude,
       longitude: store.longitude,
       weekly_delivery_value: store.weekly_delivery_value,
+      start_date: store.start_date || "",
+      end_date: store.end_date || "",
     });
   };
 
@@ -114,20 +125,33 @@ export default function StoresPage() {
             <LocationPicker
               latitude={form.latitude}
               longitude={form.longitude}
-              address={form.address}
+              address={address}
               onChange={({ latitude, longitude }) =>
                 setForm((f) => ({ ...f, latitude, longitude }))
               }
-              onAddressChange={(val) =>
-                setForm((f) => ({ ...f, address: val }))
-              }
+              onAddressChange={(val) => setAddress(val)}
             />
           </div>
           <Field
-            label="Weekly $ value"
+            label="Delivery Value ($)"
             value={form.weekly_delivery_value}
             onChange={(v) => setForm({ ...form, weekly_delivery_value: v })}
             type="number"
+            span={2}
+          />
+          <Field
+            label="Start Date"
+            value={form.start_date}
+            onChange={(v) => setForm({ ...form, start_date: v })}
+            type="date"
+            span={2}
+          />
+          <Field
+            label="End Date"
+            value={form.end_date}
+            onChange={(v) => setForm({ ...form, end_date: v })}
+            type="date"
+            span={2}
           />
         </div>
         {error && <p style={s.error}>{error}</p>}
@@ -140,6 +164,7 @@ export default function StoresPage() {
               style={s.btnGhost}
               onClick={() => {
                 setForm(empty);
+                setAddress("");
                 setEditing(null);
               }}
             >
@@ -156,7 +181,7 @@ export default function StoresPage() {
           <table style={s.table}>
             <thead>
               <tr>
-                {["Store name", "Weekly value", ""].map((h) => (
+                {["Store name", "Delivery value", "Start date", "End date", ""].map((h) => (
                   <th key={h} style={s.th}>
                     {h}
                   </th>
@@ -170,13 +195,15 @@ export default function StoresPage() {
                   <td style={s.td}>
                     ${Number(st.weekly_delivery_value).toLocaleString()}
                   </td>
+                  <td style={s.td}>{st.start_date || "-"}</td>
+                  <td style={s.td}>{st.end_date || "-"}</td>
                   <td style={s.td}>
                     <button style={s.btnSm} onClick={() => edit(st)}>
                       Edit
                     </button>
                     <button
                       style={{ ...s.btnSm, color: "#ef5350" }}
-                      onClick={() => del(st.id)}
+                      onClick={() => del(st)}
                     >
                       Remove
                     </button>
@@ -186,6 +213,13 @@ export default function StoresPage() {
             </tbody>
           </table>
         </div>
+      )}
+      {confirmItem && (
+        <ConfirmModal
+          itemName={confirmItem.name}
+          onConfirm={confirmDelete}
+          onCancel={() => setConfirmItem(null)}
+        />
       )}
     </div>
   );

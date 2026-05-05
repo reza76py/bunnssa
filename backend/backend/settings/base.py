@@ -14,7 +14,7 @@ ALLOWED_HOSTS = config(
 )
 CSRF_TRUSTED_ORIGINS = config(
     'CSRF_TRUSTED_ORIGINS',
-    default='',
+    default='http://localhost:3000,http://172.16.11.242:3000',
     cast=Csv(),
 )
 
@@ -117,7 +117,7 @@ SIMPLE_JWT = {
 
 CORS_ALLOWED_ORIGINS = config(
     'CORS_ALLOWED_ORIGINS',
-    default='http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001,http://127.0.0.1:3001',
+    default='http://localhost:3000,http://127.0.0.1:3000,http://172.16.11.242:3000',
     cast=Csv(),
 )
 

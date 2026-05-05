@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { membersApi } from "../api";
 import LocationPicker from "../components/LocationPicker";
+import ConfirmModal from "../components/ConfirmModal";
 import { s } from "../styles/common";
 
 const empty = { name: "", email: "", latitude: "", longitude: "", address: "" };
@@ -11,6 +12,7 @@ export default function MembersPage() {
   const [editing, setEditing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [confirmItem, setConfirmItem] = useState(null);
   useEffect(() => {
     load();
   }, []);
@@ -72,9 +74,11 @@ export default function MembersPage() {
     }
   };
 
-  const del = async (id) => {
-    if (!window.confirm("Remove this member?")) return;
-    await membersApi.remove(id);
+  const del = (item) => setConfirmItem(item);
+
+  const confirmDelete = async () => {
+    await membersApi.remove(confirmItem.id);
+    setConfirmItem(null);
     load();
   };
 
@@ -171,7 +175,7 @@ export default function MembersPage() {
                     </button>
                     <button
                       style={{ ...s.btnSm, color: "#ef5350" }}
-                      onClick={() => del(item.id)}
+                      onClick={() => del(item)}
                     >
                       Remove
                     </button>
@@ -181,6 +185,13 @@ export default function MembersPage() {
             </tbody>
           </table>
         </div>
+      )}
+      {confirmItem && (
+        <ConfirmModal
+          itemName={confirmItem.name}
+          onConfirm={confirmDelete}
+          onCancel={() => setConfirmItem(null)}
+        />
       )}
     </div>
   );

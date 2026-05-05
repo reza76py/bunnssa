@@ -3,6 +3,8 @@ import Layout from "./components/Layout";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import EmailVerificationPage from "./pages/EmailVerificationPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import StoresPage from "./pages/StoresPage";
 import SupervisorsPage from "./pages/SupervisorsPage";
 import MembersPage from "./pages/MembersPage";
@@ -24,6 +26,11 @@ export default function App() {
         <Route
           path="/verify-email/:uid/:token"
           element={<EmailVerificationPage />}
+        />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route
+          path="/reset-password/:uid/:token"
+          element={<ResetPasswordPage />}
         />
         <Route
           path="/"

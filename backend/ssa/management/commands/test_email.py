@@ -31,8 +31,8 @@ class Command(BaseCommand):
 
         try:
             sent = send_mail(
-                subject='Bunnings SSA - SMTP Test Email',
-                message='This is a test email from Bunnings SSA to confirm SMTP is working.',
+                subject='rezteche - SMTP Test Email',
+                message='This is a test email from rezteche to confirm SMTP is working.',
                 from_email=host_user,
                 recipient_list=[host_user],
                 fail_silently=False,

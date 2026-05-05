@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 class StoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Store
-        fields = ['id', 'name', 'latitude', 'longitude', 'weekly_delivery_value', 'created_at', 'updated_at']
+        fields = ['id', 'name', 'latitude', 'longitude', 'weekly_delivery_value', 'start_date', 'end_date', 'created_at', 'updated_at']
 
 
 class SupervisorSerializer(serializers.ModelSerializer):
@@ -58,15 +58,19 @@ class AllocationResultSerializer(serializers.ModelSerializer):
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8)
-    first_name = serializers.CharField(required=False, allow_blank=True)
-    last_name = serializers.CharField(required=False, allow_blank=True)
 
     class Meta:
         model = User
-        fields = ['username', 'password', 'email', 'first_name', 'last_name']
+        fields = ['username', 'password', 'email']
         extra_kwargs = {
             'email': {'required': True},
         }
+
+    def validate_email(self, email):
+        email = email.strip()
+        if User.objects.filter(email=email).exists():
+            raise serializers.ValidationError('An account with this email already exists.')
+        return email
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
@@ -81,10 +85,10 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
         try:
             send_mail(
-                subject='Verify your email - Bunnings SSA',
+                subject='Verify your email - rezteche',
                 message=(
-                    f'Hi {user.first_name or user.username},\n\n'
-                    'Thanks for registering with Bunnings SSA.\n'
+                    f'Hi {user.username},\n\n'
+                    'Thanks for registering with rezteche.\n'
                     'Please verify your email by clicking the link below:\n\n'
                     f'{verify_url}\n\n'
                     'If you did not create this account, you can ignore this email.'
@@ -111,7 +115,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'name', 'role', 'is_staff', 'is_superuser']
+        fields = ['id', 'username', 'email', 'name', 'role', 'is_staff', 'is_superuser']
 
     def get_name(self, obj):
         full_name = obj.get_full_name().strip()
@@ -128,4 +132,4 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class UserProfileUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email']
+        fields = ['email']

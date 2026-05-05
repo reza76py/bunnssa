@@ -100,7 +100,6 @@ def run_allocation(notes='', user=None):
     if not stores:
         raise ValueError("No stores available.")
 
-    print("=== STEP 1: Selecting top stores ===")
     n = len(supervisors)
     top_stores = stores[:n]
     member_targets = calculate_store_member_targets(top_stores, len(members))
@@ -110,7 +109,6 @@ def run_allocation(notes='', user=None):
     used_supervisors = set()
     used_members = set()
 
-    print("=== STEP 2: Assigning supervisors ===")
     for store in top_stores:
         # Find closest available supervisor
         best_sup = None
@@ -134,7 +132,6 @@ def run_allocation(notes='', user=None):
             supervisor_distance_km=best_sup_dist,
         )
 
-        print("=== STEP 3: Assigning members ===")
         # Find closest available members using the proportional target for this store.
         needed = member_targets.get(store.id, 0)
         candidates = []
@@ -153,7 +150,6 @@ def run_allocation(notes='', user=None):
                 distance_km=dist,
             )
 
-    print("=== STEP 4: Sending emails ===")
     _send_allocation_emails(result)
     return result
 
@@ -173,13 +169,7 @@ def _send_allocation_emails(result):
     if creator_email:
         reply_to = [creator_email]
 
-    print(f"[EMAIL] Starting email dispatch for allocation #{result.id}")
-    print(f"[EMAIL] EMAIL_HOST_USER configured: {bool(smtp_sender)}")
-    print(f"[EMAIL] Display FROM set to: {from_email}")
-    print(f"[EMAIL] Reply-To set to: {reply_to[0] if reply_to else '[NONE]'}")
-
     if not smtp_sender:
-        print('[EMAIL] Skipping all emails because EMAIL_HOST_USER is empty.')
         logger.warning('EMAIL_HOST_USER is empty. Skipping allocation emails for user=%s', result.created_by_id)
         return
 
@@ -209,7 +199,6 @@ def _send_allocation_emails(result):
     ).prefetch_related('member_assignments__member')
 
     assignment_count = assignments.count()
-    print(f"[EMAIL] Assignments to process: {assignment_count}")
     summary_store_lines = []
     total_weekly_value = 0
     total_members_deployed = 0
@@ -218,10 +207,6 @@ def _send_allocation_emails(result):
         store = assignment.store
         supervisor = assignment.supervisor
         total_weekly_value += float(store.weekly_delivery_value)
-        print(
-            f"[EMAIL] Processing store='{store.name}' supervisor='{supervisor.name}' "
-            f"supervisor_email='{supervisor.email or '[EMPTY]'}'"
-        )
 
         assignment_members = list(assignment.member_assignments.all())
         total_members_deployed += len(assignment_members)
@@ -247,10 +232,8 @@ def _send_allocation_emails(result):
         if supervisor.email:
             email_address = supervisor.email
             try:
-                print(f"=== Sending to supervisor: {supervisor.email} ===")
-                print(f"=== ATTEMPTING EMAIL TO: {email_address} ===")
                 _send_via_central_smtp(
-                    subject='Bunnings SSA - Your Store Assignment',
+                    subject='rezteche - Your Store Assignment',
                     message=(
                         f'Hi {supervisor.name},\n\n'
                         f'You have been assigned to the following store for this allocation:\n\n'
@@ -258,49 +241,38 @@ def _send_allocation_emails(result):
                         f'Weekly Delivery Value: ${float(store.weekly_delivery_value):,.2f}\n\n'
                         f'Team members who will assist you:\n'
                         + '\n'.join(member_lines) +
-                        '\n\nRegards,\nBunnings SSA'
+                        '\n\nRegards,\nrezteche'
                     ),
                     recipient=email_address,
                 )
-                print("SUCCESS")
-                print(f"=== EMAIL SENT SUCCESSFULLY TO: {email_address} ===")
                 logger.info('Sent assignment email to supervisor %s <%s>', supervisor.name, supervisor.email)
             except Exception as exc:
-                print(f"EMAIL FAILED: {str(exc)}")
                 logger.error(
                     'Failed to send email to supervisor %s <%s>: %s',
                     supervisor.name, supervisor.email, exc,
                 )
-        else:
-            print(f"[EMAIL] Skipping supervisor '{supervisor.name}' because email is empty")
 
         # ── Member emails ─────────────────────────────────────────────────
         for ma in assignment.member_assignments.all():
             member = ma.member
             if not member.email:
-                print(f"[EMAIL] Skipping member '{member.name}' because email is empty")
                 continue
             email_address = member.email
             try:
-                print(f"=== Sending to member: {member.email} ===")
-                print(f"=== ATTEMPTING EMAIL TO: {email_address} ===")
                 _send_via_central_smtp(
-                    subject='Bunnings SSA - Your Assignment This Week',
+                    subject='rezteche - Your Assignment This Week',
                     message=(
                         f'Hi {member.name},\n\n'
                         f'You have been assigned to the following store for this allocation:\n\n'
                         f'Store: {store.name}\n'
                         f'Distance from your home: {ma.distance_km} km\n'
                         f'Supervisor: {supervisor.name}\n\n'
-                        f'Regards,\nBunnings SSA'
+                        f'Regards,\nrezteche'
                     ),
                     recipient=email_address,
                 )
-                print("SUCCESS")
-                print(f"=== EMAIL SENT SUCCESSFULLY TO: {email_address} ===")
                 logger.info('Sent assignment email to member %s <%s>', member.name, member.email)
             except Exception as exc:
-                print(f"EMAIL FAILED: {str(exc)}")
                 logger.error(
                     'Failed to send email to member %s <%s>: %s',
                     member.name, member.email, exc,
@@ -335,15 +307,12 @@ def _send_allocation_emails(result):
             )
             logger.info('Sent allocation summary email to creator %s <%s>', result.created_by.username, creator_email)
         except Exception as exc:
-            print(f"SUMMARY EMAIL FAILED: {str(exc)}")
             logger.error(
                 'Failed to send allocation summary email to creator %s <%s>: %s',
                 result.created_by.username,
                 creator_email,
                 exc,
             )
-
-    print(f"[EMAIL] Email dispatch finished for allocation #{result.id}")
 
     try:
         connection.close()
