@@ -31,10 +31,8 @@ export default function ProfilePage() {
         {error && <p style={s.error}>{error}</p>}
         {profile && (
           <div style={{ display: "grid", gap: 12 }}>
-            <ProfileRow label="Name" value={profile.name} />
             <ProfileRow label="Username" value={profile.username} />
             <ProfileRow label="Email" value={profile.email || "Not set"} />
-            <ProfileRow label="Role" value={profile.role} />
           </div>
         )}
       </div>

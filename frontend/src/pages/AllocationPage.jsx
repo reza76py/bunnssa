@@ -187,29 +187,6 @@ export default function AllocationPage() {
         </button>
       </div>
 
-      {results.length > 1 && (
-        <div style={{ marginBottom: "1rem" }}>
-          <label style={s.fieldLabel}>View past allocation</label>
-          <select
-            style={{ ...s.input, maxWidth: 300 }}
-            onChange={(e) => {
-              const found = results.find(
-                (r) => r.id === parseInt(e.target.value),
-              );
-              if (found) setSelected(found);
-            }}
-            value={selected?.id || ""}
-          >
-            {results.map((r) => (
-              <option key={r.id} value={r.id}>
-                #{r.id} — {new Date(r.created_at).toLocaleString("en-AU")}{" "}
-                {r.notes ? `(${r.notes})` : ""}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
-
       {selected && (
         <>
           <div

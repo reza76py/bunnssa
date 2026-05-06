@@ -16,6 +16,10 @@ const empty = {
 export default function StoresPage() {
   const [stores, setStores] = useState([]);
   const [form, setForm] = useState(empty);
+  const [lastUsedDates, setLastUsedDates] = useState({
+    start_date: "",
+    end_date: "",
+  });
   const [address, setAddress] = useState("");
   const [editing, setEditing] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -35,6 +39,16 @@ export default function StoresPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const resetAddForm = (dates = lastUsedDates) => {
+    setForm({
+      ...empty,
+      start_date: dates.start_date || "",
+      end_date: dates.end_date || "",
+    });
+    setAddress("");
+    setEditing(null);
   };
 
   const save = async () => {
@@ -64,9 +78,17 @@ export default function StoresPage() {
       } else {
         await storesApi.create(payload);
       }
-      setForm(empty);
-      setAddress("");
-      setEditing(null);
+      const nextDates =
+        payload.start_date && payload.end_date
+          ? {
+              start_date: payload.start_date,
+              end_date: payload.end_date,
+            }
+          : lastUsedDates;
+      if (payload.start_date && payload.end_date) {
+        setLastUsedDates(nextDates);
+      }
+      resetAddForm(nextDates);
       setError("");
       load();
     } catch (e) {
@@ -163,9 +185,7 @@ export default function StoresPage() {
             <button
               style={s.btnGhost}
               onClick={() => {
-                setForm(empty);
-                setAddress("");
-                setEditing(null);
+                resetAddForm();
               }}
             >
               Cancel

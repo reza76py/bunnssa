@@ -10,7 +10,6 @@ import SupervisorsPage from "./pages/SupervisorsPage";
 import MembersPage from "./pages/MembersPage";
 import AllocationPage from "./pages/AllocationPage";
 import ProfilePage from "./pages/ProfilePage";
-import SettingsPage from "./pages/SettingsPage";
 
 function RequireAuth({ children }) {
   const token = localStorage.getItem("access_token");
@@ -44,7 +43,6 @@ export default function App() {
           <Route path="stores" element={<StoresPage />} />
           <Route path="supervisors" element={<SupervisorsPage />} />
           <Route path="members" element={<MembersPage />} />
-          <Route path="settings" element={<SettingsPage />} />
           <Route path="profile" element={<ProfilePage />} />
         </Route>
       </Routes>
