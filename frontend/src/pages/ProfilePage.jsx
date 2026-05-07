@@ -36,12 +36,7 @@ export default function ProfilePage() {
           </div>
         )}
       </div>
-      <div style={s.resultCard}>
-        <p style={{ margin: 0, color: "#a0a0b8", fontSize: 13 }}>
-          Super admins can create and manage all user accounts from the Django
-          admin panel.
-        </p>
-      </div>
+      
     </div>
   );
 }

@@ -39,33 +39,16 @@ export default function LoginPage() {
         <img src={rezTecheLogo} alt="RezTeche" style={styles.cornerLogoImg} />
       </a>
       <div style={styles.contentWrap}>
-        <div>
-          <div style={styles.infoTitle}>How It Works</div>
-          <ol style={styles.infoList}>
-            <li>
-              1. The highest-value stores are selected based on supervisor
-              availability.
-            </li>
-            <li>
-              2. The closest supervisors are assigned to each selected store by
-              road distance.
-            </li>
-            <li>
-              3. Members are distributed proportionally across stores based on
-              delivery value and availability.
-            </li>
-          </ol>
-
-          <div style={styles.infoTitleBenefits}>Benefits</div>
-          <ol style={styles.infoList}>
-            <li>
-              1. Optimised use of available members - no over or under
-              allocation.
-            </li>
-            <li>2. Less travel - closest people always assigned first.</li>
-            <li>3. Saves hours of manual planning every week.</li>
-          </ol>
-        </div>
+        <p style={styles.topLearnMeta}>
+          <a
+            href="https://rezteche.com/apps/team-members-assignment"
+            target="_blank"
+            rel="noreferrer"
+            style={styles.secondaryLink}
+          >
+            Learn how to use this app →
+          </a>
+        </p>
 
         <div style={styles.card}>
           <div style={styles.logo}>
@@ -119,10 +102,12 @@ const styles = {
     minHeight: "100vh",
     display: "flex",
     alignItems: "flex-start",
-    paddingTop: "150px",
+    paddingTop: "180px",
     justifyContent: "center",
     background: "#0a0a1a",
-    padding: "1rem",
+    paddingTop: "120px",
+    paddingLeft: "1rem",
+    paddingRight: "1rem",
   },
   contentWrap: {
     width: "100%",
@@ -212,7 +197,20 @@ const styles = {
     cursor: "pointer",
   },
   meta: { marginTop: 12, fontSize: 13, color: "#a0a0b8", textAlign: "center" },
+  topLearnMeta: {
+    marginTop: "2.5rem",
+    marginBottom: 0,
+    fontSize: 16,
+    color: "#a0a0b8",
+    textAlign: "center",
+  },
   link: { color: "#6c63ff", textDecoration: "none", fontWeight: 600 },
+  secondaryLink: {
+    color: "#6c63ff",
+    textDecoration: "none",
+    fontWeight: 600,
+    fontSize: 14,
+  },
   cornerLogo: {
     position: "absolute",
     top: 22,
