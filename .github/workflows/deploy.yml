@@ -54,7 +54,7 @@ jobs:
               echo "SECURE_SSL_REDIRECT=False"
               echo "SESSION_COOKIE_SECURE=True"
               echo "CSRF_COOKIE_SECURE=True"
-              echo "REACT_APP_API_URL=https://staffallocation.rezteche.com/api"
+              echo "REACT_APP_API_URL=/api"
             } > /var/www/bunnings-ssa/.env
             chmod 600 /var/www/bunnings-ssa/.env
             cd /var/www/bunnings-ssa

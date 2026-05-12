@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || "http://localhost:8000/api",
+  baseURL: process.env.REACT_APP_API_URL || "/api",
 });
 
 // Attach JWT token to every request
@@ -21,7 +21,7 @@ api.interceptors.response.use(
       try {
         const refresh = localStorage.getItem("refresh_token");
         const { data } = await axios.post(
-          `${process.env.REACT_APP_API_URL || "http://localhost:8000/api"}/token/refresh/`,
+          `${process.env.REACT_APP_API_URL || "/api"}/token/refresh/`,
           { refresh },
         );
         localStorage.setItem("access_token", data.access);
